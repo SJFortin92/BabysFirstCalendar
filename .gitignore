@@ -3,6 +3,16 @@
 *.aar
 *.ap_
 *.aab
+*.exe
+*.MSI
+*.MSP
+*.zip
+*.vmdk
+*.vmem
+*.vmsn
+*.vsix
+*.dat
+*.nupkg
 
 # Files for the ART/Dalvik VM
 *.dex
