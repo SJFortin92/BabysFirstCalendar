@@ -194,6 +194,42 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return 0;
         }
 
+        public static int AccountDelete(string CurrentEmail, string Password)
+        {
+            if (ComparePassword(Password, CurrentEmail))
+            {
+                DeleteAccountDBModel data = new DeleteAccountDBModel
+                {
+                    CurrentEmail = CurrentEmail,
+                };
+
+
+                //Open a new SQL connection
+                string newConnectionString = SQLDataAccess.GetConnectionString();
+                SqlConnection cnn = new SqlConnection(newConnectionString);
+                cnn.Open();
+
+                SqlCommand cmd = new SqlCommand("AccountDeletion", cnn);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@CurrentEmail", data.CurrentEmail);
+                cmd.Parameters.Add("@Success", SqlDbType.Int, 1);
+                cmd.Parameters.Add("@ErrorStatus", SqlDbType.Char, 50);
+                cmd.Parameters["@ErrorStatus"].Direction = ParameterDirection.Output;
+                cmd.Parameters["@Success"].Direction = ParameterDirection.Output;
+                cmd.ExecuteNonQuery();
+                int success = (int)cmd.Parameters["@Success"].Value;
+                string message = (string)cmd.Parameters["@ErrorStatus"].Value;
+
+                cnn.Close();
+
+                return success;
+            }
+
+            else
+                return 0;
+        }
+
         //For future reference of the logic when we go to load notes
         //DO NOT USE THIS TO VIEW ALL ACCOUNTS - SECURITY HAZARD
 

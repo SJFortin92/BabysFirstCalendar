@@ -131,5 +131,31 @@ namespace BabysFirstCalendar.Controllers
             return View(model);
         }
 
+        [Authorize]
+        public ActionResult DeleteAccount()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteAccount(DeleteAccountModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string CurrentEmail = RetrieveEmail();
+                if (AccountDelete(CurrentEmail, model.Password) == 1)
+                {
+                    FormsAuthentication.SignOut();
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                    ModelState.AddModelError("", "Error deleting account");
+            }
+
+            return View(model);
+        }
+
     }
 }
