@@ -4,7 +4,8 @@
     ViewBag.Title = "Delete Account";
 }
 
-<h3>Are you sure you want to delete your account?</h3>
+<h3>Account deletion</h3>
+<h4>Are you sure you want to delete your account?</h4>
 
 
 
@@ -40,7 +41,7 @@
             </div>
         </div>
     </div>
-
+    <br />
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" value="Delete Account" class="btn btn-default" />
@@ -50,3 +51,6 @@
 
 }
 
+<div>
+    @Html.ActionLink("Back to Home", "Index", "Home")
+</div>

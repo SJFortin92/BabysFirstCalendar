@@ -4,15 +4,12 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
-
+<h3>Edit your account</h3>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
     <div class="form-horizontal">
-        <h4>EditAccountModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -61,8 +58,11 @@
             </div>
         </div>
     </div>
+
 }
+
 <br />
+
 <div>
     Did you want to @Html.ActionLink("change your password?", "EditPassword", "Account")
 </div>
@@ -70,9 +70,10 @@
 <div>
     Or, did you want to @Html.ActionLink("delete your account?", "DeleteAccount", "Account")
 </div>
+
 <br />
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Home", "Index", "Home")
 </div>
 
 @section Scripts {

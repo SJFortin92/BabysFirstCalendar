@@ -1,0 +1,67 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+div {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+}
+
+/* Create a class for navigation links on the site */
+.nav-links {
+    color: black;
+    text-decoration: none;
+    font-size: 15px;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+    .nav-links:hover {
+        color: black;
+        background-color: #e6eaeb;
+        border-radius: 2px;
+        text-decoration: none;
+    }
+
+.logo{
+    font-size: 27px;
+    text-align:center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+/* Create div class for photos to get rid of underlines in anchor tags */
+.logo a:hover {
+    text-decoration: none;
+}
+
+h3 {
+    font-size: 27px;
+    text-align: center;
+}
+
+h4 {
+    font-size: 20px;
+    text-align: center;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}

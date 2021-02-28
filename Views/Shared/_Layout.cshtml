@@ -3,6 +3,7 @@
 @using BabysFirstCalendar.DatabaseBusinessLogic
 
 <head>
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Baby's First Calendar</title>
@@ -14,17 +15,19 @@
     {
         <div class="container">
             <div style="float:left;">
-                <a href="@Url.Action("Index","Home")">
-                    <img src="../Logo.png" alt="Baby's First Calendar Logo" width="150" height="150" />
-                </a>
+                <div class="logo">
+                    <a href="@Url.Action("Index","Home")">
+                        <img src="../Logo.png" alt="Baby's First Calendar Logo" width="150" height="150" />
+                    </a>
                 Baby's First Calendar
+                </div>
             </div>
 
             <div style="float:right;">
                 Welcome, @LayoutProcessor.RetrieveName()!<br />
-                @Html.ActionLink("My Account", "Edit", "Account")
+                @Html.ActionLink("My Account", "Edit", "Account", null, new { @class = "nav-links" })
                 <span> | </span>
-                @Html.ActionLink("Sign Out", "Logout", "Account")
+                @Html.ActionLink("Sign Out", "Logout", "Account", null, new { @class = "nav-links" })
             </div>
         </div>
 
@@ -34,15 +37,17 @@
     {
         <div class="container">
             <div style="float:left;">
-                <a href="@Url.Action("Index","Home")">
-                    <img src="../Logo.png" alt="Baby's First Calendar Logo" width="150" height="150" />
-                </a>
-                Baby's First Calendar
+                <div class="logo">
+                    <a href="@Url.Action("Index","Home")">
+                        <img src="../Logo.png" alt="Baby's First Calendar Logo" width="150" height="150" />
+                    </a>
+                    Baby's First Calendar
+                </div>
             </div>
             <div style="float:right;">
-                @Html.ActionLink("Register", "Signup", "Account")
+                @Html.ActionLink("Register", "Signup", "Account", null, new { @class = "nav-links" })
                 <span> | </span>
-                @Html.ActionLink("Sign In", "Login", "Account")
+                @Html.ActionLink("Sign In", "Login", "Account", null, new { @class = "nav-links" })
             </div>
         </div>
     }
@@ -70,7 +75,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - Baby's First Calendar</p>
         </footer>
     </div>
 

@@ -4,7 +4,7 @@
     ViewBag.Title = "NewMemory";
 }
 
-<h2>NewMemory</h2>
+<h3>Add a new memory</h3>
 
 
 @using (Html.BeginForm("NewMemory", "Memory", FormMethod.Post, new { enctype="multipart/form-data" })) 
@@ -45,7 +45,7 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Home", "Index", "Home")
 </div>
 
 @section Scripts {

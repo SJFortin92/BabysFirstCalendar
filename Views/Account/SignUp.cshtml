@@ -5,8 +5,9 @@
     ViewBag.Title = "Sign Up";
 }
 
-<h2>Make a new account</h2>
 
+<h3>Sign up</h3>
+<h4>your account information</h4>
 
 @using (Html.BeginForm()) 
 {
@@ -72,7 +73,7 @@
              </div>
 
         </div>
-        
+        <br />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Next" class="btn btn-default" />
@@ -82,7 +83,7 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Home", "Index", "Home")
 </div>
 
 @section Scripts {
