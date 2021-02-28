@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Dynamic;
 
 namespace BabysFirstCalendar.Controllers
 {
@@ -71,7 +72,7 @@ namespace BabysFirstCalendar.Controllers
 
             return View();
         }
-
+        
         [Authorize]
         public ActionResult Edit()
         {
@@ -107,25 +108,28 @@ namespace BabysFirstCalendar.Controllers
             return View(model);
         }
 
-        //[Authorize]
-        //public ActionResult UpdatePassword()
-        //{
-        //    return View();
-        //}
+        [Authorize]
+        public ActionResult EditPassword()
+        {
+            return View();
+        }
 
-        //[Authorize]
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult UpdatePassword()
-        //{
-        //    if (ModelState.IsValid)
-        //    {
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditPassword(EditPasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string CurrentEmail = RetrieveEmail();
+                if (UpdatePassword(CurrentEmail, model.CurrentPassword, model.NewPassword) == 1)
+                    return RedirectToAction("Index", "Home");
+                else
+                    ModelState.AddModelError("", "Error updating password");
+            }
 
-        //        return RedirectToAction("Index", "Home");
-        //    }
-
-        //    return View(model);
-        //}
+            return View(model);
+        }
 
     }
 }
