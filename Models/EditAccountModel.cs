@@ -8,15 +8,15 @@ namespace BabysFirstCalendar.Models
 {
     public class EditAccountModel
     {
-        [Display(Name = "First Name")]
+        [Display(Name = "First name")]
         [Required(ErrorMessage = "Please enter your first name")]
         public string FirstName { get; set; }
 
-        [Display(Name = "Last Name")]
+        [Display(Name = "Last name")]
         [Required(ErrorMessage = "Please enter your last name")]
         public string LastName { get; set; }
 
-        [Display(Name = "Phone Number")]
+        [Display(Name = "Phone number")]
         [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
 
@@ -30,7 +30,7 @@ namespace BabysFirstCalendar.Models
         [Compare("Email", ErrorMessage = "Email addresses must match")]
         public string ConfirmEmail { get; set; }
 
-        [Display(Name = "Notification Schedule")]
+        [Display(Name = "Notification schedule")]
         public Notification NotificationSchedule { get; set; }
     }
 }

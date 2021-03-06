@@ -30,14 +30,5 @@ namespace BabysFirstCalendar.DataAccess
             }
 
         }
-        /*
-        public static int SaveData<T>(string SQL, T data)
-        {
-            using (IDbConnection cnn = new SqlConnection(GetConnectionString()))
-            {
-                return cnn.Execute(SQL, data);
-            }
-        }
-        */
     }
 }

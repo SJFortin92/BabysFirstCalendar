@@ -11,14 +11,17 @@ namespace BabysFirstCalendar.Controllers
 {
     public class ChildController : Controller
     {
-        // GET: Child
+        //The Child view
+        //Add functionality to return the selected child's information
+        //Will only display if a user is logged in
         [Authorize]
         public ActionResult Child()
         {
-            ViewBag.Message = "Your child's information page";
+            ViewBag.Message = "Add a new child to your account";
             return View();
         }
 
+        //Processes if a user posts data
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -26,6 +29,7 @@ namespace BabysFirstCalendar.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Calls CreateChild from the ChildProcessor class in DatabaseBusinessLogic
                 if (ChildProcessor.CreateChild(model.FirstName, model.LastName, model.DateOfBirth) == 1)
                 {
                     return RedirectToAction("Index", "Home");

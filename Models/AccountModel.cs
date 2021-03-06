@@ -15,11 +15,11 @@ namespace BabysFirstCalendar.Models
     }
     public class AccountModel
     {
-        [Display(Name = "First Name")]
+        [Display(Name = "First name")]
         [Required(ErrorMessage = "Please enter your first name")]
         public string FirstName { get; set; }
 
-        [Display(Name = "Last Name")]
+        [Display(Name = "Last name")]
         [Required(ErrorMessage = "Please enter your last name")]
         public string LastName { get; set; }
 
@@ -44,7 +44,7 @@ namespace BabysFirstCalendar.Models
         [Compare("Password", ErrorMessage = "Your passwords must match")]
         public string ConfirmPassword { get; set; }
 
-        [Display(Name = "Notification Schedule")]
+        [Display(Name = "Notification schedule")]
         public Notification NotificationSchedule { get; set; }
 
     }

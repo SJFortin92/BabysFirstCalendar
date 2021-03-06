@@ -14,6 +14,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
     public static class AccountProcessor
     {
+        //Function to hash passwords
         public static string HashPassword(string password)
         {
             //Salt and hash the password first
@@ -39,6 +40,8 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
         //This function returns the stored, hashed password from the database
         public static string FindPassword(string username)
         {
+            //Connect to SQL and select the Password where the account email = the user's email
+            //Join the two tables on AccountID
             string newConnectionString = SQLDataAccess.GetConnectionString();
             string SQL = @"SELECT Password.Password FROM Password
                         JOIN Account
@@ -55,6 +58,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
         }
 
         //This function compares the hashed password to the one given by the user
+        //Returns true if the passwords match
         public static bool ComparePassword(string userInputtedPassword, string username)
         {
             //Fetch the stored value
@@ -73,13 +77,18 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                     return false;
             return true;
         }
-    
+        
+        //Function called by AccountController in the Controller folder
         public static int CreateAccount(string firstName, string lastName,
             string email, int notificationSchedule, string password)
         {
+            //Ensure the notificationInt is actually an integer and not enum
             int notificationInt = Convert.ToInt32(notificationSchedule);
+
+            //Hash the password given
             string passwordToSave = HashPassword(password);
 
+            //This calls the AccountModel in the DatabaseModels, NOT the regular models
             AccountModel data = new AccountModel
             {
                 FirstName = firstName,
@@ -94,9 +103,12 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             SqlConnection cnn = new SqlConnection(newConnectionString);
             cnn.Open();
             
+            //Call the AccountCreation stored procedure
             SqlCommand cmd = new SqlCommand("AccountCreation", cnn);
             
             cmd.CommandType = CommandType.StoredProcedure;
+
+            //Add the parameters
             cmd.Parameters.AddWithValue("@FirstName", data.FirstName);
             cmd.Parameters.AddWithValue("@LastName", data.LastName);
             cmd.Parameters.AddWithValue("@Password", data.Password);
@@ -107,16 +119,25 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             cmd.Parameters["@ErrorStatus"].Direction = ParameterDirection.Output;
             cmd.Parameters["@Success"].Direction = ParameterDirection.Output;
             cmd.ExecuteNonQuery();
+
+            //Set success equal to the @Success outputted by the stored procedure
             int success = (int)cmd.Parameters["@Success"].Value;
+
             string message = (string)cmd.Parameters["@ErrorStatus"].Value;
+
+            //Close the connection
             cnn.Close();
 
+            //Return success (0 for an error, and 1 for it being ok)
             return success;
         }
 
+        //Function called by AccountController in the Controller folder
+        //Updates an account
         public static int UpdateAccount(string FirstName, string LastName, string PhoneNumber,
             string CurrentEmail, string NewEmail, int Notification)
         {
+            //Uses EditAccountDBModel in the DatabaseModels folder
             EditAccountDBModel data = new EditAccountDBModel
             {
                 FirstName = FirstName,
@@ -133,9 +154,12 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             SqlConnection cnn = new SqlConnection(newConnectionString);
             cnn.Open();
 
+            //Call the AccountUpdate stored procedure
             SqlCommand cmd = new SqlCommand("AccountUpdate", cnn);
 
             cmd.CommandType = CommandType.StoredProcedure;
+
+            //Add the parameters
             cmd.Parameters.AddWithValue("@FirstName", data.FirstName);
             cmd.Parameters.AddWithValue("@LastName", data.LastName);
             cmd.Parameters.AddWithValue("@CurrentEmail", data.CurrentEmail);
@@ -147,19 +171,29 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             cmd.Parameters["@ErrorStatus"].Direction = ParameterDirection.Output;
             cmd.Parameters["@Success"].Direction = ParameterDirection.Output;
             cmd.ExecuteNonQuery();
+
+            //Set success equal to the @Success output
             int success = (int)cmd.Parameters["@Success"].Value;
             string message = (string)cmd.Parameters["@ErrorStatus"].Value;
 
+            //Close connection
             cnn.Close();
 
+            //Returns 1 if successful, 0 if not
             return success;
         }
 
+        //Function called by AccountController in the Controller folder
+        //Updates a user's password
         public static int UpdatePassword(string CurrentEmail, string CurrentPassword, string NewPassword)
         {
+            //Make sure that the current password matches the user entered one, if so, continue
             if (ComparePassword(CurrentPassword, CurrentEmail))
             {
+                //Hash the new password
                 NewPassword = HashPassword(NewPassword);
+
+                //Calls EditPasswordDBModel in the DatabaseModel folder
                 EditPasswordDBModel data = new EditPasswordDBModel
                 {
                     Email = CurrentEmail,
@@ -172,6 +206,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 SqlConnection cnn = new SqlConnection(newConnectionString);
                 cnn.Open();
 
+                //Calls the PasswordUpdate stored procedure in SQL
                 SqlCommand cmd = new SqlCommand("PasswordUpdate", cnn);
 
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -182,11 +217,15 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 cmd.Parameters["@ErrorStatus"].Direction = ParameterDirection.Output;
                 cmd.Parameters["@Success"].Direction = ParameterDirection.Output;
                 cmd.ExecuteNonQuery();
+
+                //Sets success equal to @Success output
                 int success = (int)cmd.Parameters["@Success"].Value;
                 string message = (string)cmd.Parameters["@ErrorStatus"].Value;
 
+                //Close the connection
                 cnn.Close();
 
+                //Returns 1 if successful, 0 if not
                 return success;
             }
 
@@ -194,10 +233,14 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return 0;
         }
 
+        //Is called by AccountController in the Controller folder
+        //Deletes an account entirely, included associated children, memories, and photos
         public static int AccountDelete(string CurrentEmail, string Password)
         {
+            //Ensure that the given password matches the stored password
             if (ComparePassword(Password, CurrentEmail))
             {
+                //Calls DeleteAccountDBModel from the DatabaseModels folder
                 DeleteAccountDBModel data = new DeleteAccountDBModel
                 {
                     CurrentEmail = CurrentEmail,
@@ -209,6 +252,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 SqlConnection cnn = new SqlConnection(newConnectionString);
                 cnn.Open();
 
+                //Calls the AccountDeletion stored procedure
                 SqlCommand cmd = new SqlCommand("AccountDeletion", cnn);
 
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -218,15 +262,19 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 cmd.Parameters["@ErrorStatus"].Direction = ParameterDirection.Output;
                 cmd.Parameters["@Success"].Direction = ParameterDirection.Output;
                 cmd.ExecuteNonQuery();
+
+                //Set success equal to the @Success output
                 int success = (int)cmd.Parameters["@Success"].Value;
                 string message = (string)cmd.Parameters["@ErrorStatus"].Value;
 
                 cnn.Close();
 
+                //Return 1 if successful, 0 if not
                 return success;
             }
 
             else
+                //If the password doesn't match, return 0 for a failure
                 return 0;
         }
 

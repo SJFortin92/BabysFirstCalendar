@@ -11,7 +11,7 @@
             <h2>Add a memory</h2>
             <p>We know you're busy. That's why we make it easy to add memories of your child's firsts.</p>
             <p>Whether it's the first time they rolled over or their first haircut, enter it here so you can look at it forever.</p>
-            <p><a class="btn btn-default" href="~/Views/Memory/NewMemory.cshtml">Make a new memory</a></p>
+            @Html.ActionLink("Make a new memory","NewMemory","Memory", null, new { @class = "nav-links" })
         </div>
     }
     else
