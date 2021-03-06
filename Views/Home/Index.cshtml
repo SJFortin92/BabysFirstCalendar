@@ -4,31 +4,99 @@
 
 <br />
 <hr />
-<div class="row">
-    @if (Request.IsAuthenticated)
-    {
-        <div class="col-md-4">
-            <h2>Add a memory</h2>
-            <p>We know you're busy. That's why we make it easy to add memories of your child's firsts.</p>
-            <p>Whether it's the first time they rolled over or their first haircut, enter it here so you can look at it forever.</p>
-            @Html.ActionLink("Make a new memory","NewMemory","Memory", null, new { @class = "nav-links" })
+
+@*Scripts and declarations for the Memories Calendar*@
+
+<div id="calendar"></div>
+
+
+@*Displays note information when clicked upon, modal for the small box up on top of the page*@
+<div id="noteModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+            </div>
+            <div class="modal-body">
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
-    }
-    else
-    {
-        <div class="col-md-4">
-            <h2>Memories at a Glance</h2>
-            <p>This application will allow you to enter memories of your child's "firsts".</p>
-        </div>
-    }
-    <div class="col-md-4">
-        <h2>Lorem Ipsum</h2>
-        <p>Placeholder for calendar</p>
-        <p>Lorem ipsum yadda yadda yadda</p>
-    </div>
-    <div class="col-md-4">
-        <h2>Lorem Ipsum</h2>
-        <p>Placeholder for calendar</p>
-        <p>Lorem ipsum yadda yadda yadda</p>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+    $(document).ready(function (){
+
+    @*Declare the memories as an array*@
+    var memories = [];
+
+    $.ajax({
+        type: "GET",
+        url: "Home/GetMemories",
+        success: function (data) {
+            $.each(data, function(i, note) {
+                memories.push({
+                title: note.Text,
+                start: moment(note.Date),
+                end: momemnt(note.Date),
+                extendedProps: {
+                    hasPhoto: note.HasPhoto
+                }
+            });
+        })
+
+        GenerateCalendar(memories);
+        },
+
+        error: function (error) {
+            alert: ('failed to retrieve memories');
+            }
+        })
+
+    function GenerateCalendar(notes)
+        {
+            $('#calendar').fullCalendar('destroy');
+            $('#calendar').fullCalendar({
+                contentHeight: 400,
+                defaultDate: new Date(),
+                timeFormat: 'h(:mm)a',
+                eventColor: '#378006',
+                events: notes,
+                eventClick: function (calEvent, jsEvent, view) {
+                    $('#noteModal #eventTitle').text(calEvent.title);
+                    var $description = $('<div/>');
+                    $description.append($('<p/>').html('<b>Date: </b>') + calEvent.start.format("DD-MMM-YYYY"));
+                    $description.append($('<p/>').html('<b>Memory Text: </b>' + calEvent.title));
+                    $('#noteModal #pDetails').empty().html($description);
+                    $('#noteModal').modal();
+                }
+            })
+        }
+    }
+    )
+    </script>
+}
+
+@*<div class="row">
+       @if (Request.IsAuthenticated)
+       {
+           <div class="col-md-4">
+               <h2>Add a memory</h2>
+               <p>We know you're busy. That's why we make it easy to add memories of your child's firsts.</p>
+               <p>Whether it's the first time they rolled over or their first haircut, enter it here so you can look at it forever.</p>
+               @Html.ActionLink("Make a new memory", "NewMemory", "Memory", null, new { @class = "nav-links" })
+           </div>
+       }
+       else
+       {
+           <div class="col-md-4">
+               <h2>Memories at a Glance</h2>
+               <p>This application will allow you to enter memories of your child's "firsts".</p>
+           </div>
+       }
+    </div>*@

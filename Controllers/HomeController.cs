@@ -29,6 +29,16 @@ namespace BabysFirstCalendar.Controllers
 
             return View();
         }
+
+        //Function to retrieve memories from the database
+        public JsonResult GetMemories()
+        {
+            using (NewbornCalendarModelEntities dc = new NewbornCalendarModelEntities())
+            {
+                var memories = dc.Notes.ToList();
+                return new JsonResult { Data = memories, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+        }
     }
 
 }
