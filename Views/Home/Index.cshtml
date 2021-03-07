@@ -1,14 +1,10 @@
-﻿@{
+﻿@using BabysFirstCalendar.Controllers
+@{
     ViewBag.Title = "Home Page";
 }
 
 <br />
 <hr />
-
-@*Scripts and declarations for the Memories Calendar*@
-
-<div id="calendar"></div>
-
 
 @*Displays note information when clicked upon, modal for the small box up on top of the page*@
 <div id="noteModal" class="modal fade" role="dialog">
@@ -28,59 +24,49 @@
     </div>
 </div>
 
+@*Scripts and declarations for the Memories Calendar*@
+
 @section Scripts{
     <script>
-    $(document).ready(function (){
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                events: function (start, end, timezone, callback) {
+                    $.ajax({
+                        type: "GET",
+                        contentType: "application/json",
+                        url: "Memory/GetMemories",
+                        dataType: "JSON",
+                        success: function (data) {
+                            var memories = [];
+                            $.each(data, function (i, data) {
+                                memories.push(
+                                    {
+                                        title: data.Text,
+                                        start: moment(data.Date).format("MM-DD-YYYY"),
+                                        end: moment(data.Date).format("MM-DD-YYYY"),
+                                        backgroundColor: 'yellow',
+                                        id: data.NoteID
+                                    });
+                            });
 
-    @*Declare the memories as an array*@
-    var memories = [];
-
-    $.ajax({
-        type: "GET",
-        url: "Home/GetMemories",
-        success: function (data) {
-            $.each(data, function(i, note) {
-                memories.push({
-                title: note.Text,
-                start: moment(note.Date),
-                end: momemnt(note.Date),
-                extendedProps: {
-                    hasPhoto: note.HasPhoto
+                            callback(memories);
+                        }
+                    })
                 }
-            });
-        })
+            
+             });
+            calendar.render();
+        });
 
-        GenerateCalendar(memories);
-        },
 
-        error: function (error) {
-            alert: ('failed to retrieve memories');
-            }
-        })
-
-    function GenerateCalendar(notes)
-        {
-            $('#calendar').fullCalendar('destroy');
-            $('#calendar').fullCalendar({
-                contentHeight: 400,
-                defaultDate: new Date(),
-                timeFormat: 'h(:mm)a',
-                eventColor: '#378006',
-                events: notes,
-                eventClick: function (calEvent, jsEvent, view) {
-                    $('#noteModal #eventTitle').text(calEvent.title);
-                    var $description = $('<div/>');
-                    $description.append($('<p/>').html('<b>Date: </b>') + calEvent.start.format("DD-MMM-YYYY"));
-                    $description.append($('<p/>').html('<b>Memory Text: </b>' + calEvent.title));
-                    $('#noteModal #pDetails').empty().html($description);
-                    $('#noteModal').modal();
-                }
-            })
-        }
-    }
-    )
     </script>
 }
+
+<div id="calendar"></div>
+
+
+
 
 @*<div class="row">
        @if (Request.IsAuthenticated)

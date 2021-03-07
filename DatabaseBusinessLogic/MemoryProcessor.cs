@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -11,9 +12,63 @@ using static BabysFirstCalendar.DatabaseBusinessLogic.RetrievalProcessor;
 
 namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
+    //Class for elements of the memories that we will pass to display on the calendar
+    public class MemoriesToLoad
+    {
+        public string Text { get; set; }
+        public DateTime Date { get; set; }
+        public int HasPhoto { get; set; }
+    }
+
     //Need to add Update and Delete in here
     public static class MemoryProcessor
     {
+        //Loads up memories for display
+        public static List<MemoriesToLoad> ViewMemories()
+        {
+            //Open a new SQL connection
+            string newConnectionString = SQLDataAccess.GetConnectionString();
+            SqlConnection cnn = new SqlConnection(newConnectionString);
+
+            List<MemoriesToLoad> memories = null;
+
+            try
+            {
+
+                SqlCommand command = new SqlCommand("SELECT Text, Date, HasPhoto FROM Note;", cnn);
+
+                using ( command )
+                {
+                    cnn.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            memories.Add(new MemoriesToLoad
+                            {
+                                Text = Convert.ToString(reader["Text"]),
+                                Date = Convert.ToDateTime(reader["Date"]),
+                                HasPhoto = Convert.ToInt16(reader["HasPhoto"])
+                            });
+                        }
+                    }
+                }
+                return memories;
+            }
+
+            //Throw exceptions if need be
+            catch (Exception)
+            {
+                throw;
+            }
+
+            //Close the connection
+            finally
+            {
+                cnn.Close();
+            }
+        }
+
         //This is called by the MemoryController in the Controller folder
         public static int CreateMemory(DateTime Date, string Text, int HasPhoto, string PhotoLocation, int PhotoSize)
         {

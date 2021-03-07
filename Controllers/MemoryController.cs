@@ -13,6 +13,16 @@ namespace BabysFirstCalendar.Controllers
     //Need to add UpdateMemory and DeleteMemory to here
     public class MemoryController : Controller
     {
+        //Function to retrieve memories from the database
+        public ActionResult GetMemories()
+        {
+            ViewBag.Message = "Viewing memories";
+
+            ViewMemories();
+
+            return View();
+        }
+
         //The NewMemory view
         //Only displays if a user is logged in
         [Authorize]
