@@ -23,15 +23,14 @@ namespace BabysFirstCalendar.EmailManagement
                             OR
                             NotificationScheduleID=2";
 
-            List<AccountRemindersDBModel> listOfAccounts = LoadData<AccountRemindersDBModel>(SQL);
-            return listOfAccounts;
+            return LoadData<AccountRemindersDBModel>(SQL);
         }
 
         public static bool NeedsReminder(AccountRemindersDBModel Account)
         {
             //Set variables
             DateTime dateUsed = Account.DateLastUsed;
-            int notifSched = Account.NotificationSchedule;
+            int notifSched = Account.NotificationScheduleID;
             DateTime current = DateTime.Today;
 
             //Find how many days since last used
@@ -51,5 +50,7 @@ namespace BabysFirstCalendar.EmailManagement
             else
                 return false;
         }
+
+
     }
 }

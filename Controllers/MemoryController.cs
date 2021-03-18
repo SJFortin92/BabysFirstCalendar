@@ -18,7 +18,7 @@ namespace BabysFirstCalendar.Controllers
         {
             ViewBag.Message = "Viewing memories";
 
-            ViewMemories();
+            //ViewMemories();
 
             return View();
         }
