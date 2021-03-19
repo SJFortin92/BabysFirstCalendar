@@ -50,6 +50,26 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return null;
         }
 
+        //RetrieveName function overload that takes the email as a parameter
+        public static string RetrieveName(string username)
+        {
+            string newConnectionString = SQLDataAccess.GetConnectionString();
+
+            //Selects the FirstName where the AccountEmail equals the current user's email
+            string SQL = @"SELECT FirstName FROM Account
+                        WHERE Account.Email = '" + username + "'";
+            using (SqlConnection cnn = new SqlConnection(newConnectionString))
+            {
+                SqlCommand command = new SqlCommand(SQL, cnn);
+                cnn.Open();
+                string FirstName = Convert.ToString(command.ExecuteScalar());
+                cnn.Close();
+                return FirstName;
+            }
+
+        }
+
+
         // Returns the current user's last name
         public static string RetrieveLastName()
         {
