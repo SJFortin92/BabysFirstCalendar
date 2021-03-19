@@ -13,10 +13,10 @@ using System.Net;
 
 namespace BabysFirstCalendar.EmailManagement
 {
-    public class SMTPManager
+    public static class SMTPManager
     {
         //Function to compose the body of an email
-        public string ComposeBody(string firstName, DateTime dateLastUsed)
+        public static string ComposeBody(string firstName, DateTime dateLastUsed)
         {
             //Probably should insert links to go straight to "make a new memory" and "edit account"
             string body = "Hello " + firstName + ",<br/>";
@@ -29,12 +29,12 @@ namespace BabysFirstCalendar.EmailManagement
 
         //Sends the message to the user
         
-        public int SendMessage(string receiverEmail, string firstName, DateTime dateLastUsed)
+        public static int SendMessage(string receiverEmail, string firstName, DateTime dateLastUsed)
         {
             //Set all our variables for the email we need
-            string sendingEmail = "noreply.babysfirstcalendar@gmail.com";
+            string sendingEmail = "email";
             string fromName = "Baby's First Calendar";
-            string password = "Xi^8dDA%8";
+            string password = "Password";
             string messageSubject = "Reminder to make a new memory";
             string body = ComposeBody(firstName, dateLastUsed);
 
@@ -77,9 +77,11 @@ namespace BabysFirstCalendar.EmailManagement
 
         //Loops through each of the accounts and sends an email if 
         //the account needs a reminder
-        public int IterateAccounts()
+        public static int IterateAccounts()
         {
             List<AccountRemindersDBModel> listOfAccounts = PullNotificationAccounts();
+
+            //For each account in the list of accounts...
             foreach (var account in listOfAccounts)
             {
                 if (NeedsReminder(account))

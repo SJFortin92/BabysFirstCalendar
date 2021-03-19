@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using static BabysFirstCalendar.DatabaseBusinessLogic.AccountProcessor;
-using static BabysFirstCalendar.EmailManagement.EmailLogic;
+using static BabysFirstCalendar.EmailManagement.SMTPManager;
 using BabysFirstCalendar.DatabaseModels;
 
 namespace BabysFirstCalendar.Controllers
@@ -16,12 +16,6 @@ namespace BabysFirstCalendar.Controllers
         public ActionResult Index()
         {
             return View();
-        }
-
-        public ActionResult TestLists()
-        {
-            var data = PullNotificationAccounts();
-            return View(data);
         }
 
         public ActionResult About()
