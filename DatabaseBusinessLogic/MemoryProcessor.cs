@@ -16,13 +16,30 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
     //Need to add Update and Delete in here
     public static class MemoryProcessor
     {
-        //Loads up memories for display
+        //Loads up memories for display. It uses the demo Child notes
+        //if the user is not logged in
         public static List<MemoryRetrievalDBModel> ViewMemories()
         {
-            string SQL = @"SELECT Text, Date, HasPhoto
-                            FROM Note";
 
-            return LoadData<MemoryRetrievalDBModel>(SQL);
+            if (HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                int childID = RetrieveChildID();
+                string SQL = @"SELECT Text, Date, HasPhoto
+                            FROM Note
+                            WHERE ChildID = '" + childID + "'";
+
+                return LoadData<MemoryRetrievalDBModel>(SQL);
+            }
+
+            else
+            {
+                int childID = 10;
+                string SQL = @"SELECT Text, Date, HasPhoto
+                            FROM Note
+                            WHERE ChildID = '" + childID + "'";
+
+                return LoadData<MemoryRetrievalDBModel>(SQL);
+            }
         }
 
         //This is called by the MemoryController in the Controller folder
