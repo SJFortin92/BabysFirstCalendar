@@ -6,8 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using static BabysFirstCalendar.DatabaseBusinessLogic.AccountProcessor;
-using static BabysFirstCalendar.EmailManagement.SMTPManager;
-using BabysFirstCalendar.DatabaseModels;
+using static BabysFirstCalendar.DatabaseBusinessLogic.MemoryProcessor;
 
 namespace BabysFirstCalendar.Controllers
 {
@@ -16,6 +15,13 @@ namespace BabysFirstCalendar.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public ActionResult TestLogic()
+        {
+            var data = ViewMemories();
+
+            return View(data);
         }
 
         public ActionResult About()

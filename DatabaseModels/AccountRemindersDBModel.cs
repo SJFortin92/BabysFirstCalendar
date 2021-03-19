@@ -14,7 +14,7 @@ namespace BabysFirstCalendar.DatabaseModels
         public string FirstName { get; set; }
         public string Email { get; set; }
         public DateTime DateLastUsed { get; set; }
-        public int NotificationSchedule { get; set; }
+        public int NotificationScheduleID { get; set; }
         
     }
 }
