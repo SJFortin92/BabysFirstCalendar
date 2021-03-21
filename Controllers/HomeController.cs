@@ -17,9 +17,30 @@ namespace BabysFirstCalendar.Controllers
             return View();
         }
 
+        //Json result to display the memories
+        public JsonResult DisplayMemories()
+        {
+            var memories = ViewMemories();
+
+            //Convert the SQL memory date to a string
+            foreach (var memory in memories)
+            {
+                memory.StringDate = memory.Date.ToShortDateString();
+            }
+
+            //Return the results
+            return new JsonResult { Data = memories, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
         public ActionResult TestLogic()
         {
             var data = ViewMemories();
+
+            foreach (var memory in data)
+            {
+                memory.StringDate = memory.Date.ToShortDateString();
+            }
+
 
             return View(data);
         }

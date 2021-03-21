@@ -9,6 +9,7 @@ namespace BabysFirstCalendar.DatabaseModels
     {
         public string Text { get; set; }
         public DateTime Date { get; set; }
+        public string StringDate { get; set; }
         public int HasPhoto { get; set; }
     }
 }
