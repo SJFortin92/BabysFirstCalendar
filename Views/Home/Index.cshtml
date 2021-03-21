@@ -5,7 +5,7 @@
 <br />
 <hr />
 
-<div id="calender"></div>
+<div id="calendar"></div>
 
 <!-- This is to display information "on-click" when a user clicks on events -->
 
@@ -27,7 +27,9 @@
 </div>
 
 
-<!-- The following few lines references the css and javascript files for Fullcalendar -->
+<!-- The following few lines references the css and javascript files for Fullcalendar 
+     Should edit it so that it works with the fullcalendar library downloaded in BabysFirstCalendar
+     But it breaks once I reference the other stylesheets/scripts -->
 <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
 <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
 
@@ -50,7 +52,7 @@
                 success: function (data) {
                     $.each(data, function (i, v) {
                         events.push({
-                            title: v.StringDate,
+                            title: v.Text,
                             description: v.Text,
                             start: v.StringDate,
                             extendedProps: {
@@ -59,21 +61,36 @@
                         });
                     })
 
-                    GenerateCalender(events);
+                    GenerateCalendar(events);
                 },
                 error: function (error) {
-                    alert('failed');
+                    alert('Failed to retrieve memories');
                 }
             })
 
 
             //This actually makes the calendar and defines its parameters
 
-            function GenerateCalender(events) {
-                $('#calender').fullCalendar('destroy');
-                $('#calender').fullCalendar({
-                    contentHeight: 450,
+            function GenerateCalendar(events) {
+                $('#calendar').fullCalendar('destroy');
+                $('#calendar').fullCalendar({
+                    buttonText: {
+                        prev: 'Previous', // <
+                        next: 'Next' // >
+                    },
+                    contentHeight: 500,
                     defaultDate: new Date(),
+
+                    //Don't display event time, since all memories are "all day events"
+                    displayEventTime: false,
+
+                    //For some reason, the next button has to be in the center to display on the right, and the title
+                    //has to be in the right to display in the center. I don't know why but it works this way?
+                    header: {
+                        left: 'prev',
+                        center: 'next',
+                        right: 'title'
+                    },
                     timeFormat: 'h(:mm)a',
                     eventLimit: true,
                     eventColor: '#378006',
@@ -82,8 +99,8 @@
                         $('#myModal #eventTitle').text(calEvent.title);
                         var $description = $('<div/>');
 
-                        //Below comments for if we want to add a start/end date
-                        //$description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MMM-YYYY")));
+                        
+                        $description.append($('<p/>').html('<b>Date: </b>' + calEvent.start.format("MM-DD-YYYY")));
                         //if (calEvent.end != null) {
                         //    $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MMM-YYYY")));
                         //}
@@ -100,63 +117,6 @@
     </script>
 }
 
-@*Displays note information when clicked upon, modal for the small box up on top of the page*@
-<!--<div id="noteModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><span id="eventTitle"></span></h4>
-            </div>
-            <div class="modal-body">
-                <p id="pDetails"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>-->
-@*Scripts and declarations for the Memories Calendar*@
-
-<!--
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                events: function (start, end, timezone, callback) {
-                    $.ajax({
-                        type: "GET",
-                        contentType: "application/json",
-                        url: "Memory/DisplayMemories",
-                        dataType: "JSON",
-                        success: function (data) {
-                            var memories = [];
-                            $.each(data, function (i, data) {
-                                memories.push(
-                                    {
-                                        title: data.Text,
-                                        start: moment(data.Date).format("MM-DD-YYYY"),
-                                        end: moment(data.Date).format("MM-DD-YYYY"),
-                                        backgroundColor: 'yellow',
-                                        id: data.NoteID
-                                    });
-                            });
-
-                            callback(memories);
-                        }
-                    })
-                }
-
-             });
-            calendar.render();
-        });
-
-
-    </script>
-}
-
-<div id="calendar"></div>-->
 @*<div class="row">
        @if (Request.IsAuthenticated)
        {
