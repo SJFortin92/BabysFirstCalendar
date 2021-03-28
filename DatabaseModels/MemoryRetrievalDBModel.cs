@@ -7,6 +7,7 @@ namespace BabysFirstCalendar.DatabaseModels
 {
     public class MemoryRetrievalDBModel
     {
+        public int NoteID { get; set; }
         public string Text { get; set; }
         public DateTime Date { get; set; }
         public string StringDate { get; set; }
