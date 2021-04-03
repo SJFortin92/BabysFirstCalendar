@@ -48,33 +48,43 @@ namespace BabysFirstCalendar.Controllers
                 int fileSize;
                 int hasPhoto;
 
-                WebImage PhotoUpload = WebImage.GetImageFromRequest();
-
-                //If the submitted file is not an accepted WebImage type, then we ask the user
-                //to submit a photo.
-                if (PhotoUpload == null && model.Photo != null)
+                //If there are files to save...
+                if (model.Photo != null)
                 {
-                    ModelState.AddModelError("", "Please upload an image");
-                }
+                    //Get the file
+                   HttpPostedFileBase photoUpload = model.Photo;
 
-                //If we have an approved WebImage type
-                else if (PhotoUpload != null)
-                {
-                    //Get the file name
-                    string name = Path.GetFileName(PhotoUpload.FileName);
-
-                    //hasPhoto is true
+                    //hasPhoto is true, set it to 1
                     hasPhoto = 1;
 
                     //Get the file size
-                    fileSize = PhotoUpload.GetBytes().Length / 1024;
+                    fileSize = photoUpload.ContentLength / 1024;
 
-                    //Set the path equal to the upload folder in the project
-                    path = "~/upload/" + name;
+                    //Set a random filename and make a path
+                    string fileName = photoUpload.FileName;
+                    path = Path.Combine(Server.MapPath("~/upload/" + fileName));
 
-                    //Save the photo
-                    PhotoUpload.Save(Server.MapPath(path));
-                        
+                    //Save the file
+                    photoUpload.SaveAs(path);
+
+
+                    //If the note already exists, update it
+                    if (model.NoteID > 0)
+                    {
+                        if (UpdateMemory(model.NoteID, model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+
+                        else
+                        {
+                            ModelState.AddModelError("", "Failure updating the note");
+                        }
+                    }
+
+                    //If the note does not exist, then create a new one
+                    else
+                    {
                         //Call CreateMemory from MemoryProcessor in DatabaseBusinessLogic
                         if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
                         {
@@ -85,6 +95,7 @@ namespace BabysFirstCalendar.Controllers
                         {
                             ModelState.AddModelError("", "Error when adding a new memory");
                         }
+                    }
 
                 }
 
@@ -95,18 +106,38 @@ namespace BabysFirstCalendar.Controllers
                     path = null;
                     fileSize = 0;
 
-                    //Call CreateMemory from the MemoryProcessor class in the DatabaseBusinessLogic folder
-                    if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                    //If the note already exists, update it
+                    if (model.NoteID > 0)
                     {
-                        return RedirectToAction("Index", "Home");
+                        if (UpdateMemory(model.NoteID, model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+
+                        else
+                        {
+                            ModelState.AddModelError("", "Failure updating the note");
+                        }
                     }
 
+                    //If the note does not exist, then create a new one
                     else
                     {
-                        ModelState.AddModelError("", "Error when adding a new memory");
+                        //Call CreateMemory from MemoryProcessor in DatabaseBusinessLogic
+                        if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+
+                        else
+                        {
+                            ModelState.AddModelError("", "Error when adding a new memory");
+                        }
                     }
 
                 }
+
+                return RedirectToAction("Index", "Home");
             }
             return View(model);
         }

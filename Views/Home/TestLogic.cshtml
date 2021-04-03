@@ -23,6 +23,9 @@
         <th>
             @Html.DisplayNameFor(model => model.StringDate)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PhotoLocationReference)
+        </th>
         <th></th>
     </tr>
 
@@ -39,6 +42,9 @@
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.StringDate)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.PhotoLocationReference)
     </td>
     <td>
         @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |

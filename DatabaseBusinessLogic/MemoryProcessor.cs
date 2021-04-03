@@ -4,16 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using static BabysFirstCalendar.DatabaseBusinessLogic.RetrievalProcessor;
 using static BabysFirstCalendar.DataAccess.SQLDataAccess;
 
 namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
-    //Need to add Update and Delete in here
+    //Class contains methods to load a list of memories, create a new memory in the DB, update a memory in the DB
+    //and delete a memory from the DB
     public static class MemoryProcessor
     {
         //Loads up memories for display. It uses the demo Child notes
@@ -24,8 +24,10 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             if (HttpContext.Current.User.Identity.IsAuthenticated)
             {
                 int childID = RetrieveChildID();
-                string SQL = @"SELECT NoteID, Text, Date, HasPhoto
-                            FROM Note
+                string SQL = @"SELECT N.NoteID, N.Text, N.Date, N.HasPhoto, P. PhotoLocationReference
+                            FROM Note as N
+                            LEFT JOIN Photo as P
+                            ON N.NoteID = P.NoteID
                             WHERE ChildID = '" + childID + "'";
 
                 return LoadData<MemoryRetrievalDBModel>(SQL);
@@ -34,8 +36,10 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             else
             {
                 int childID = 10;
-                string SQL = @"SELECT NoteID, Text, Date, HasPhoto
-                            FROM Note
+                string SQL = @"SELECT N.NoteID, N.Text, N.Date, N.HasPhoto, P. PhotoLocationReference
+                            FROM Note as N
+                            LEFT JOIN Photo as P
+                            ON N.NoteID = P.NoteID
                             WHERE ChildID = '" + childID + "'";
 
                 return LoadData<MemoryRetrievalDBModel>(SQL);

@@ -12,5 +12,7 @@ namespace BabysFirstCalendar.DatabaseModels
         public DateTime Date { get; set; }
         public string StringDate { get; set; }
         public int HasPhoto { get; set; }
+
+        public string PhotoLocationReference { get; set; }
     }
 }

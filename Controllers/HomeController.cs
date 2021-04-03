@@ -62,6 +62,7 @@ namespace BabysFirstCalendar.Controllers
             int hasPhoto;
             var status = false;
 
+            //If there are files to save...
             if (Request.Files.Count > 0)
             {
                 //Get the file

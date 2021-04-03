@@ -44,6 +44,7 @@
             <div class="modal-body">
                 <form class="form-horizontal">
                     <input type="hidden" id="hdnoteID" value="0" />
+                    
                     <div class="form-group">
                         <label>Date</label>
                         <div class="input-group date" id="dtp1">
@@ -53,14 +54,18 @@
                             </span>
                         </div>
                     </div>
+                    
                     <div class="form-group">
                         <label>Description</label>
                         <textarea id="txtDescription" rows="3" class="form-control"></textarea>
                     </div>
+
                     <div class="form-group">
-                        <label>Upload a photo</label>
-                        <input type="file" id="fileUpload" accept="image/png, image/jpeg, image/jpg" />
+                            <label>Upload a photo</label>
+                            <input type="file" id="fileUpload" accept="image/png, image/jpeg, image/jpg" />
+                            <div id="previewImage"></div>
                     </div>
+  
                     <button type="button" id="btnSave" class="btn btn-success">Save</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -105,9 +110,8 @@
                                 title: v.Text,
                                 description: v.Text,
                                 start: v.StringDate,
-                                extendedProps: {
-                                    hasPhoto: v.HasPhoto
-                                }
+                                hasPhoto: v.HasPhoto,
+                                photoLocation: v.PhotoLocationReference
                             });
                         })
 
@@ -157,6 +161,7 @@
                         $description.append($('<p/>').html('<b>HasPhoto: </b>' + calEvent.hasPhoto));
                         $description.append($('<p/>').html('<b>Date: </b>' + calEvent.start.format("MM-DD-YYYY")));
                         $description.append($('<p/>').html('<b>Memory: </b>' + calEvent.description));
+                        $description.append($('<p/>').html('<b>PhotoLocation: </b>' + calEvent.photoLocation));
                         $('#myModal #pDetails').empty().html($description);
 
                         $('#myModal').modal();
@@ -167,6 +172,7 @@
                     select: function (start, end) {
                         selectedEvent = {
                             noteID: 0,
+                            hasPhoto: 0,
                             title: '',
                             description: '',
                             start: start
@@ -180,8 +186,10 @@
                     eventDrop: function (event) {
                         var data = {
                             NoteID: event.noteID,
+                            HasPhoto: event.hasPhoto,
                             Note: event.title,
                             Date: event.start.format('MM/DD/YYYY'),
+                            PhotoLocation: event.photoLocation
                         };
                         SaveEvent(data);
                     }
@@ -228,11 +236,38 @@
                     $('#hdnoteID').val(selectedEvent.noteID);
                     $('#txtDescription').val(selectedEvent.title);
                     $('#txtStart').val(selectedEvent.start.format('MM/DD/YYYY'));
+                    
                 }
                 $('#myModal').modal('hide');
                 $('#myModalSave').modal();
             }
 
+            //When there's a change event in #fileUpload (part of the modal to upload images,
+            //triggers the preview image
+            $("#fileUpload").on('change', function () {
+
+                if (typeof (FileReader) != "undefined") {
+
+                    //Calls the div right next to the #fileUpload input
+                    var image_holder = $("#previewImage");
+                    image_holder.empty();
+
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $("<img />", {
+                            "src": e.target.result,
+                            "class": "img-fluid",
+                            "width": "300",
+                            "height": "auto"
+                        }).appendTo(image_holder);
+
+                    }
+                    image_holder.show();
+                    reader.readAsDataURL($(this)[0].files[0]);
+                } else {
+                    alert("This browser does not support FileReader.");
+                }
+            });
             
             //What happens when a user clicks on btnSave
             //Validates entry and puts data into a var, formdata
@@ -254,19 +289,12 @@
                     return;
                 }
 
-
                 //Make a new FormData and append the values
 
                 var data = new FormData();
                 data.append("NoteID", $('#hdnoteID').val());
                 data.append("Date", $('#txtStart').val().trim());
                 data.append("Note", $('#txtDescription').val().trim());
-
-                ////var data = {
-                ////    noteid: $('#hdnoteid').val(),
-                ////    date: $('#txtstart').val().trim(),
-                ////    note: $('#txtdescription').val().trim()
-                ////}
 
                 //Append the files
                 for (var x = 0; x < files.length; x++) {
@@ -276,34 +304,6 @@
                 SaveNote(data);
             })
 
-            //$('#fileUpload').on('change', function (e) {
-            //    var files = e.target.files;
-            //    if (files.length > 0) {
-            //        if (window.FormData !== undefined) {
-            //            var data = new FormData();
-            //            for (var x = 0; x < files.length; x++) {
-            //                data.append("file" + x, files[x]);
-            //            }
-
-            //            $.ajax({
-            //                type: "POST",
-            //                url: '/home/SaveMemory',
-            //                contentType: false,
-            //                processData: false,
-            //                data: data,
-            //                success: function (result) {
-            //                    console.log(result);
-            //                },
-            //                error: function () {
-            //                    alert('Failed to upload the photo')
-            //                }
-            //            });
-            //        }
-            //        else {
-            //            alert("This browser doesn't support HTML5 file uploads!");
-            //        }
-            //    }
-            //});
             
             //Function that sends the data via a JsonRequest to the controller
             function SaveNote(data) {
