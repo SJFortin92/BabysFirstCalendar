@@ -58,7 +58,7 @@
                         <textarea id="txtDescription" rows="3" class="form-control"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Photo</label>
+                        <label>Upload a photo</label>
                         <input type="file" id="fileUpload" accept="image/png, image/jpeg, image/jpg" />
                     </div>
                     <button type="button" id="btnSave" class="btn btn-success">Save</button>
@@ -233,37 +233,14 @@
                 $('#myModalSave').modal();
             }
 
-            $('#fileUpload').on('change', function (e) {
-                var files = e.target.files;
-                if (files.length > 0) {
-                    if (window.FormData !== undefined) {
-                        var data = new FormData();
-                        for (var x = 0; x < files.length; x++) {
-                            data.append("file" + x, files[x]);
-                        }
-
-                        $.ajax({
-                            type: "POST",
-                            url: '/home/SaveMemory',
-                            contentType: false,
-                            processData: false,
-                            data: data,
-                            success: function (result) {
-                                console.log(result);
-                            },
-                            error: function () {
-                                alert('Failed to upload the photo')
-                            }
-                        });
-                    }
-                    else {
-                        alert("This browser doesn't support HTML5 file uploads!");
-                    }
-                }
-
+            
             //What happens when a user clicks on btnSave
             //Validates entry and puts data into a var, formdata
             $('#btnSave').click(function () {
+
+                //Get the files from the #fileUpload input button
+                let fileUploader = $("#fileUpload").get(0);
+                let files = fileUploader.files;
 
                 //Validation/
 
@@ -277,22 +254,64 @@
                     return;
                 }
 
-                var data = {
-                    NoteID: $('#hdnoteID').val(),
-                    Date: $('#txtStart').val().trim(),
-                    Note: $('#txtDescription').val().trim(),
-                }
 
+                //Make a new FormData and append the values
+
+                var data = new FormData();
+                data.append("NoteID", $('#hdnoteID').val());
+                data.append("Date", $('#txtStart').val().trim());
+                data.append("Note", $('#txtDescription').val().trim());
+
+                ////var data = {
+                ////    noteid: $('#hdnoteid').val(),
+                ////    date: $('#txtstart').val().trim(),
+                ////    note: $('#txtdescription').val().trim()
+                ////}
+
+                //Append the files
+                for (var x = 0; x < files.length; x++) {
+                    data.append("file " + x, files[x]);
+                }
                 //Call function to submit data to the server
                 SaveNote(data);
             })
 
+            //$('#fileUpload').on('change', function (e) {
+            //    var files = e.target.files;
+            //    if (files.length > 0) {
+            //        if (window.FormData !== undefined) {
+            //            var data = new FormData();
+            //            for (var x = 0; x < files.length; x++) {
+            //                data.append("file" + x, files[x]);
+            //            }
 
+            //            $.ajax({
+            //                type: "POST",
+            //                url: '/home/SaveMemory',
+            //                contentType: false,
+            //                processData: false,
+            //                data: data,
+            //                success: function (result) {
+            //                    console.log(result);
+            //                },
+            //                error: function () {
+            //                    alert('Failed to upload the photo')
+            //                }
+            //            });
+            //        }
+            //        else {
+            //            alert("This browser doesn't support HTML5 file uploads!");
+            //        }
+            //    }
+            //});
+            
             //Function that sends the data via a JsonRequest to the controller
             function SaveNote(data) {
                 $.ajax({
                     type: "POST",
                     url: '/home/SaveMemory',
+                    contentType: false,
+                    processData: false,
                     data: data,
                     success: function (data) {
                         if (data.status) {
@@ -307,6 +326,8 @@
                 })
 
             }
+
+            
         })
     </script>
 }

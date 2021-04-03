@@ -58,69 +58,61 @@ namespace BabysFirstCalendar.Controllers
         {
             //Declare the path, file size and photo bit so we can use it later
             string path;
-            int fileSize = 0;
+            int fileSize;
             int hasPhoto;
             var status = false;
 
             if (Request.Files.Count > 0)
             {
-                try
+                //Get the file
+                HttpFileCollectionBase files = Request.Files;
+                HttpPostedFileBase photoUpload = files[0];
+
+                //hasPhoto is true, set it to 1
+                hasPhoto = 1;
+
+                //Get the file size
+                fileSize = photoUpload.ContentLength / 1024;
+
+                //Set a random filename and make a path
+                string fileName = photoUpload.FileName;
+                path = Path.Combine(Server.MapPath("~/upload/" + fileName));
+
+                //Save the file
+                photoUpload.SaveAs(path);
+
+
+                //If the note already exists, update it
+                if (model.NoteID > 0)
                 {
-                    //Get the file
-                    HttpFileCollectionBase files = Request.Files;
-                    HttpPostedFileBase photoUpload = files[0];
-
-                    //Get the file name
-                    string name = photoUpload.FileName;
-
-                    //hasPhoto is true
-                    hasPhoto = 1;
-
-                    //Get the file size
-                    //fileSize = PhotoUpload.GetBytes().Length / 1024;
-
-                    //Set the path equal to the upload folder in the project
-                    path = Path.Combine(Server.MapPath("~/upload/"), name);
-
-                    //Save the photo
-                    photoUpload.SaveAs(path);
-
-                    //If the note already exists, update it
-                    if (model.NoteID > 0)
+                    if (UpdateMemory(model.NoteID, model.Date, model.Note, hasPhoto, path, fileSize) == 1)
                     {
-                        if (UpdateMemory(model.NoteID, model.Date, model.Note, hasPhoto, path, fileSize) == 1)
-                        {
-                            status = true;
-                            return new JsonResult { Data = new { status = status } };
-                        }
-
-                        else
-                        {
-                            ModelState.AddModelError("", "Failure updating the note");
-                        }
+                        status = true;
+                        return new JsonResult { Data = new { status = status } };
                     }
 
-                    //If the note does not exist, then create a new one
                     else
                     {
-                        //Call CreateMemory from MemoryProcessor in DatabaseBusinessLogic
-                        if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
-                        {
-                            status = true;
-                            return new JsonResult { Data = new { status = status } };
-                        }
-
-                        else
-                        {
-                            ModelState.AddModelError("", "Error when adding a new memory");
-                        }
+                        ModelState.AddModelError("", "Failure updating the note");
                     }
                 }
 
-                catch (Exception e)
+                //If the note does not exist, then create a new one
+                else
                 {
-                    return Json("Error " + e.Message);
+                    //Call CreateMemory from MemoryProcessor in DatabaseBusinessLogic
+                    if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                    {
+                        status = true;
+                        return new JsonResult { Data = new { status = status } };
+                    }
+
+                    else
+                    {
+                        ModelState.AddModelError("", "Error when adding a new memory");
+                    }
                 }
+
             }
 
             //If the user has not submitted a file
