@@ -7,7 +7,7 @@
 
 <div id="calendar"></div>
 
-<!-- This is to display information "on-click" when a user clicks on events -->
+<!-- This is to display information "on-click" when a user clicks on existing events -->
 
 <div id="myModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -32,6 +32,7 @@
     </div>
 </div>
 
+<!-- This what shows when a user clicks on "Edit" for existing memories, or clicks on a blank spot in the calendar -->
 
 <div id="myModalSave" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -55,6 +56,10 @@
                     <div class="form-group">
                         <label>Description</label>
                         <textarea id="txtDescription" rows="3" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Photo</label>
+                        <input type="file" id="fileUpload" accept="image/png, image/jpeg, image/jpg" />
                     </div>
                     <button type="button" id="btnSave" class="btn btn-success">Save</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -149,7 +154,7 @@
 
                         //Append description, essentially, the text we will see in the modal
                         var $description = $('<div/>');
-                        $description.append($('<p/>').html('<b>NoteID: </b>' + calEvent.noteID));
+                        $description.append($('<p/>').html('<b>HasPhoto: </b>' + calEvent.hasPhoto));
                         $description.append($('<p/>').html('<b>Date: </b>' + calEvent.start.format("MM-DD-YYYY")));
                         $description.append($('<p/>').html('<b>Memory: </b>' + calEvent.description));
                         $('#myModal #pDetails').empty().html($description);
@@ -183,10 +188,16 @@
                 })
             }
 
+            //What happens when users click the "Edit" button
             $('#btnEdit').click(function () {
                 //Open modal dialog for edit event
                 openAddEditForm();
             })
+
+            //What happens when users click the "Delete button"
+            //Confirms user wants to delete the memory, retrieves the NoteID
+            //Then calls DeleteMemory from Home Controller
+            //If successful, hides the modal and rerenders calendar
             $('#btnDelete').click(function () {
                 if (selectedEvent != null && confirm('Are you sure?')) {
                     $.ajax({
@@ -210,6 +221,8 @@
                 format: 'MM/DD/YYYY'
             });
 
+            //Function for when people click on existing memories
+            //Loads information to display to the user
             function openAddEditForm() {
                 if (selectedEvent != null) {
                     $('#hdnoteID').val(selectedEvent.noteID);
@@ -219,12 +232,46 @@
                 $('#myModal').modal('hide');
                 $('#myModalSave').modal();
             }
+
+            $('#fileUpload').on('change', function (e) {
+                var files = e.target.files;
+                if (files.length > 0) {
+                    if (window.FormData !== undefined) {
+                        var data = new FormData();
+                        for (var x = 0; x < files.length; x++) {
+                            data.append("file" + x, files[x]);
+                        }
+
+                        $.ajax({
+                            type: "POST",
+                            url: '/home/SaveMemory',
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (result) {
+                                console.log(result);
+                            },
+                            error: function () {
+                                alert('Failed to upload the photo')
+                            }
+                        });
+                    }
+                    else {
+                        alert("This browser doesn't support HTML5 file uploads!");
+                    }
+                }
+
+            //What happens when a user clicks on btnSave
+            //Validates entry and puts data into a var, formdata
             $('#btnSave').click(function () {
+
                 //Validation/
+
                 if ($('#txtDescription').val().trim() == "") {
                     alert('Text required');
                     return;
                 }
+
                 if ($('#txtStart').val().trim() == "") {
                     alert('Date required');
                     return;
@@ -235,13 +282,13 @@
                     Date: $('#txtStart').val().trim(),
                     Note: $('#txtDescription').val().trim(),
                 }
+
+                //Call function to submit data to the server
                 SaveNote(data);
-                // call function for submit data to the server 
             })
 
-            //Token for ValidateAntiForgeryToken
-            //var token = $('[name=__RequestVerificationToken]').val();
 
+            //Function that sends the data via a JsonRequest to the controller
             function SaveNote(data) {
                 $.ajax({
                     type: "POST",
@@ -255,7 +302,7 @@
                         }
                     },
                     error: function () {
-                        alert('Failed');
+                        alert('Failed to save the memory');
                     }
                 })
 

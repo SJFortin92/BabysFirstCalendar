@@ -58,66 +58,68 @@ namespace BabysFirstCalendar.Controllers
         {
             //Declare the path, file size and photo bit so we can use it later
             string path;
-            int fileSize;
+            int fileSize = 0;
             int hasPhoto;
             var status = false;
 
-            WebImage PhotoUpload = WebImage.GetImageFromRequest();
-
-            //If the submitted file is not an accepted WebImage type, then we ask the user
-            //to submit a photo.
-            if (PhotoUpload == null && model.Photo != null)
+            if (Request.Files.Count > 0)
             {
-                ModelState.AddModelError("", "Please upload an image");
-            }
-
-            //If we have an approved WebImage type
-            else if (PhotoUpload != null)
-            {
-                //Get the file name
-                string name = Path.GetFileName(PhotoUpload.FileName);
-
-                //hasPhoto is true
-                hasPhoto = 1;
-
-                //Get the file size
-                fileSize = PhotoUpload.GetBytes().Length / 1024;
-
-                //Set the path equal to the upload folder in the project
-                path = "~/upload/" + name;
-
-                //Save the photo
-                PhotoUpload.Save(Server.MapPath(path));
-            
-                //If the note already exists, update it
-                if (model.NoteID > 0)
+                try
                 {
-                    if (UpdateMemory(model.NoteID, model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                    //Get the file
+                    HttpFileCollectionBase files = Request.Files;
+                    HttpPostedFileBase photoUpload = files[0];
+
+                    //Get the file name
+                    string name = photoUpload.FileName;
+
+                    //hasPhoto is true
+                    hasPhoto = 1;
+
+                    //Get the file size
+                    //fileSize = PhotoUpload.GetBytes().Length / 1024;
+
+                    //Set the path equal to the upload folder in the project
+                    path = Path.Combine(Server.MapPath("~/upload/"), name);
+
+                    //Save the photo
+                    photoUpload.SaveAs(path);
+
+                    //If the note already exists, update it
+                    if (model.NoteID > 0)
                     {
-                        status = true;
-                        return new JsonResult { Data = new { status = status } };
+                        if (UpdateMemory(model.NoteID, model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                        {
+                            status = true;
+                            return new JsonResult { Data = new { status = status } };
+                        }
+
+                        else
+                        {
+                            ModelState.AddModelError("", "Failure updating the note");
+                        }
                     }
 
+                    //If the note does not exist, then create a new one
                     else
                     {
-                        ModelState.AddModelError("", "Failure updating the note");
+                        //Call CreateMemory from MemoryProcessor in DatabaseBusinessLogic
+                        if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                        {
+                            status = true;
+                            return new JsonResult { Data = new { status = status } };
+                        }
+
+                        else
+                        {
+                            ModelState.AddModelError("", "Error when adding a new memory");
+                        }
                     }
                 }
 
-                //If the note does not exist, then create a new one
-                else
+                catch (Exception e)
                 {
-                    //Call CreateMemory from MemoryProcessor in DatabaseBusinessLogic
-                    if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
-                    {
-                        status = true;
-                        return new JsonResult { Data = new { status = status } };
-                    }
-
-                    else
-                    {
-                        ModelState.AddModelError("", "Error when adding a new memory");
-                    }
+                    return Json("Error " + e.Message);
                 }
             }
 
