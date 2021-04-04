@@ -5,6 +5,8 @@
 <br />
 <hr />
 
+<b>Your photo memory:</b> </ br>
+
 <div id="calendar"></div>
 
 <!-- This is to display information "on-click" when a user clicks on existing events -->
@@ -44,7 +46,7 @@
             <div class="modal-body">
                 <form class="form-horizontal">
                     <input type="hidden" id="hdnoteID" value="0" />
-                    
+
                     <div class="form-group">
                         <label>Date</label>
                         <div class="input-group date" id="dtp1">
@@ -54,18 +56,18 @@
                             </span>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Description</label>
                         <textarea id="txtDescription" rows="3" class="form-control"></textarea>
                     </div>
 
                     <div class="form-group">
-                            <label>Upload a photo</label>
-                            <input type="file" id="fileUpload" accept="image/png, image/jpeg, image/jpg" />
-                            <div id="previewImage"></div>
+                        <label>Upload a photo</label>
+                        <input type="file" id="fileUpload" accept="image/png, image/jpeg, image/jpg" />
+                        <div id="previewImage"></div>
                     </div>
-  
+
                     <button type="button" id="btnSave" class="btn btn-success">Save</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -156,12 +158,16 @@
                         selectedEvent.noteID = calEvent.noteID;
                         $('#myModal #eventTitle').text(calEvent.title);
 
-                        //Append description, essentially, the text we will see in the modal
+                        //Append description, essentially, what we will see in the modal
                         var $description = $('<div/>');
-                        $description.append($('<p/>').html('<b>HasPhoto: </b>' + calEvent.hasPhoto));
                         $description.append($('<p/>').html('<b>Date: </b>' + calEvent.start.format("MM-DD-YYYY")));
                         $description.append($('<p/>').html('<b>Memory: </b>' + calEvent.description));
                         $description.append($('<p/>').html('<b>PhotoLocation: </b>' + calEvent.photoLocation));
+                        if (calEvent.hasPhoto == 1) {
+                            //Insert some HTML to hold the place for the photo
+                            $description.append($('<p/>').html('<b>Your photo memory:</b> </br> <img src="' + calEvent.photoLocation + '" alt="Your memory" height:auto width="300" /> '));
+                        }
+
                         $('#myModal #pDetails').empty().html($description);
 
                         $('#myModal').modal();
@@ -195,6 +201,7 @@
                     }
                 })
             }
+
 
             //What happens when users click the "Edit" button
             $('#btnEdit').click(function () {
@@ -236,7 +243,7 @@
                     $('#hdnoteID').val(selectedEvent.noteID);
                     $('#txtDescription').val(selectedEvent.title);
                     $('#txtStart').val(selectedEvent.start.format('MM/DD/YYYY'));
-                    
+
                 }
                 $('#myModal').modal('hide');
                 $('#myModalSave').modal();
@@ -268,7 +275,7 @@
                     alert("This browser does not support FileReader.");
                 }
             });
-            
+
             //What happens when a user clicks on btnSave
             //Validates entry and puts data into a var, formdata
             $('#btnSave').click(function () {
@@ -304,7 +311,7 @@
                 SaveNote(data);
             })
 
-            
+
             //Function that sends the data via a JsonRequest to the controller
             function SaveNote(data) {
                 $.ajax({
@@ -327,7 +334,7 @@
 
             }
 
-            
+
         })
     </script>
 }
