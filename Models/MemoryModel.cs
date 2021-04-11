@@ -9,6 +9,8 @@ namespace BabysFirstCalendar.Models
 {
     public class MemoryModel
     {
+        public int NoteID { get; set; }
+
         [Display(Name = "Date")]
         [Required(ErrorMessage = "Please enter the date")]
         [DataType(DataType.Date)]

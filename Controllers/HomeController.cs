@@ -167,34 +167,32 @@ namespace BabysFirstCalendar.Controllers
         }
 
 
-        //Add Memory Delete function here
-        public ActionResult TestLogic()
-        {
-            var data = ViewMemories();
-
-            foreach (var memory in data)
-            {
-                memory.StringDate = memory.Date.ToShortDateString();
-            }
-
-
-            return View(data);
-        }
-
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "More about Baby's First Calendar";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Contact us";
 
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public ActionResult Contact(ContactModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //Enter logic to submit a contact request here
+                return RedirectToAction("Index", "Home");
+            }
+            return View(model);
+        }
     }
 
 }
