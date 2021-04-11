@@ -8,7 +8,7 @@ using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Web.Security;
-using static BabysFirstCalendar.DatabaseBusinessLogic.AccountProcessor;
+using static BabysFirstCalendar.DatabaseBusinessLogic.RetrievalProcessor;
 using static BabysFirstCalendar.DatabaseBusinessLogic.MemoryProcessor;
 
 namespace BabysFirstCalendar.Controllers
@@ -25,10 +25,17 @@ namespace BabysFirstCalendar.Controllers
         {
             var memories = ViewMemories();
 
-            //Convert the SQL memory date to a string
+            //Convert data if necessary
             foreach (var memory in memories)
             {
+                //Convert the SQL memory date to a string
                 memory.StringDate = memory.Date.ToShortDateString();
+
+                if (memory.PhotoLocationReference != null)
+                {
+                    //Code to trim the pathway and make it ~/upload/photoName
+                    memory.PhotoLocationReference = RetrieveRelativeImagePath(memory.PhotoLocationReference);
+                }
             }
 
             //Return the results

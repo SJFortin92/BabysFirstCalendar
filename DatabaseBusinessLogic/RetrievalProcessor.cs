@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 
@@ -9,6 +10,20 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
     public static class RetrievalProcessor
     {
+        //Get the Javascript-friendly path for a user uploaded photo from SQL
+        public static string RetrieveRelativeImagePath(string originalPath)
+        {
+            //Split up the directories
+            string[] directories = originalPath.Split(Path.DirectorySeparatorChar);
+            //Get the number of directoires
+            int numDirectories = directories.Length;
+
+            //We only want the file name, since we know it's in the upload folder. That would
+            //be the last directory in the path.
+            string pathToReturn = Path.Combine(@"../upload/", directories[numDirectories-1]);
+            return pathToReturn;
+        }
+
         //Get the current user's email
         public static string RetrieveEmail()
         {

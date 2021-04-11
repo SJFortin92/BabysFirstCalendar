@@ -5,8 +5,6 @@
 <br />
 <hr />
 
-<b>Your photo memory:</b> </ br>
-
 <div id="calendar"></div>
 
 <!-- This is to display information "on-click" when a user clicks on existing events -->
@@ -162,10 +160,14 @@
                         var $description = $('<div/>');
                         $description.append($('<p/>').html('<b>Date: </b>' + calEvent.start.format("MM-DD-YYYY")));
                         $description.append($('<p/>').html('<b>Memory: </b>' + calEvent.description));
-                        $description.append($('<p/>').html('<b>PhotoLocation: </b>' + calEvent.photoLocation));
                         if (calEvent.hasPhoto == 1) {
-                            //Insert some HTML to hold the place for the photo
-                            $description.append($('<p/>').html('<b>Your photo memory:</b> </br> <img src="' + calEvent.photoLocation + '" alt="Your memory" height:auto width="300" /> '));
+                            //Right now, it displays the photo automatically. Would like to change to "on click" display
+                            $description.append($('<p/>').html('<b>Photo Memory: </b>'));
+                            $description.append($('<p/>').html('<img src="' + calEvent.photoLocation + '" height: auto width = "300" />'));
+
+                            //Test code for button and img placeholder for on click display
+                            //$description.append($('<p/>').html('<button id="btnViewMemoryImage" class="btn btn-default">View Image</button>'));
+                            //$description.append($('<p/>').html('<img id="viewMemory" style="display:none;" height:auto width="300" src="viewMemory"/>'));
                         }
 
                         $('#myModal #pDetails').empty().html($description);
@@ -202,6 +204,20 @@
                 })
             }
 
+            //Functions and "on click" for the buttons
+
+
+            //This is not used right now, please refine.
+            //Problems include: Not displaying when added in description of modal
+            //But displays when in the actual HTML portion
+            //Additionally, the photo does not close out when users close the memory
+            ////Users have to click "View image" to refresh it
+            //$('#btnViewMemoryImage').click(function () {
+            //    var sourceOfPicture = selectedEvent.photoLocation;
+            //    var img = document.getElementById('viewMemory')
+            //    img.src = sourceOfPicture;
+            //    img.style.display = "block";
+            //})
 
             //What happens when users click the "Edit" button
             $('#btnEdit').click(function () {
