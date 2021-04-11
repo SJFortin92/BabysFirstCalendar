@@ -18,6 +18,8 @@
 
 </head>
 <body>
+
+    @*If the user is logged in, it will just return the view for the logged in person*@
     @if (Request.IsAuthenticated)
     {
         <div class="container">
@@ -35,11 +37,13 @@
                 @Html.ActionLink("My Account", "Edit", "Account", null, new { @class = "nav-links" })
                 <span> | </span>
                 @Html.ActionLink("Sign Out", "Logout", "Account", null, new { @class = "nav-links" })
+
             </div>
         </div>
 
 
     }
+    @*Otherwise, it will show the user to log in or sign up*@
     else
     {
         <div class="container">
@@ -51,12 +55,18 @@
                     Baby's First Calendar
                 </div>
             </div>
+
+            @*Begin log in form, floating on the right side of the page*@
             <div style="float:right;">
+
                 @Html.ActionLink("Register", "Signup", "Account", null, new { @class = "nav-links" })
                 <span> | </span>
                 @Html.ActionLink("Sign In", "Login", "Account", null, new { @class = "nav-links" })
-            </div>
+            
+             </div>
+                        
         </div>
+        
     }
    
     @*<div class="navbar navbar-inverse">
@@ -78,13 +88,20 @@
                 </div>
             </div>
         </div>*@
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
+<div class="container body-content">
+    @RenderBody()
+    <hr />
+
+    <footer>
+        <div class="footer">
+            @Html.ActionLink("Contact Us", "Contact", "Home", null, new { @class = "nav-links" })
+            <span>|</span>
+            @Html.ActionLink("About Us", "About", "Home", null, new { @class = "nav-links" })
+
             <p>&copy; @DateTime.Now.Year - Baby's First Calendar</p>
-        </footer>
-    </div>
+        </div>
+    </footer>
+</div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

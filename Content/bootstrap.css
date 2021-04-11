@@ -120,6 +120,8 @@ textarea {
   color: inherit;
   font: inherit;
   margin: 0;
+  height:auto;
+  width:300px;
 }
 button {
   overflow: visible;
