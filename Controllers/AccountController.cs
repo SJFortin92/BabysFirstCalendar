@@ -23,7 +23,8 @@ namespace BabysFirstCalendar.Controllers
             return View();
         }
 
-        //Process Login after user posts information
+
+        //If the user tries to log in from the normal view page
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model)
