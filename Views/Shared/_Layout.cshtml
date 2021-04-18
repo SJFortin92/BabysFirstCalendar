@@ -5,10 +5,6 @@
 <head>
     <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
     
-    @*References for Fullcalendar*@
-    <link href='~/fullcalendar/lib/main.css' rel='stylesheet' />
-    <script src='~/fullcalendar/lib/main.js'></script>
-
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Baby's First Calendar</title>
@@ -18,7 +14,6 @@
 
 </head>
 <body>
-
     @*If the user is logged in, it will just return the view for the logged in person*@
     @if (Request.IsAuthenticated)
     {
@@ -68,39 +63,20 @@
         </div>
         
     }
-   
-    @*<div class="navbar navbar-inverse">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("About", "About", "Home")</li>
-                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                    </ul>
-                </div>
-            </div>
-        </div>*@
+
 <div class="container body-content">
+    
     @RenderBody()
+    
     <hr />
 
-    <footer>
-        <div class="footer">
-            @Html.ActionLink("Contact Us", "Contact", "Home", null, new { @class = "nav-links" })
-            <span>|</span>
-            @Html.ActionLink("About Us", "About", "Home", null, new { @class = "nav-links" })
-
-            <p>&copy; @DateTime.Now.Year - Baby's First Calendar</p>
-        </div>
-    </footer>
+    @*Footer div class for Contact Us and copyright info*@
+    <div class="footer">
+        @Html.ActionLink("Contact Us", "Contact", "Home", null, new { @class = "nav-links" })
+        <span>|</span>
+        @Html.ActionLink("About Us", "About", "Home", null, new { @class = "nav-links" })
+        <p>&copy; @DateTime.Now.Year - Baby's First Calendar</p>
+    </div>
 </div>
 
     @Scripts.Render("~/bundles/jquery")
