@@ -10,6 +10,7 @@ using System.Web.Script.Serialization;
 using System.Web.Security;
 using static BabysFirstCalendar.DatabaseBusinessLogic.RetrievalProcessor;
 using static BabysFirstCalendar.DatabaseBusinessLogic.MemoryProcessor;
+using static BabysFirstCalendar.DatabaseBusinessLogic.InputProcessor;
 
 namespace BabysFirstCalendar.Controllers
 {
@@ -58,6 +59,9 @@ namespace BabysFirstCalendar.Controllers
         }
 
         //Update or save a memory using the Fullcalendar on Home page
+        //Need to incorporate ValidateAntiForgeryToken with JsonResult
+        //Want to refactor this so that it isn't so bulky.
+        //Request.Files.Count is not recognized in static classes - workaround?
         [Authorize]
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -72,7 +76,20 @@ namespace BabysFirstCalendar.Controllers
                 //Get the files
                 HttpFileCollectionBase files = Request.Files;
 
-                //Save the photos
+                //Set i to 0, first element in files
+                //Allows for multiple photo uploads in the future
+                int i = 0;
+
+                //If the files are not an image, then do not continue
+                //Currently does not warn a user that they are trying to upload the wrong
+                //type of file. Will need to add warning
+                if (ImageValidation(files, i) == false)
+                {
+                    status = false;
+                    return new JsonResult { Data = new { status = status } };
+                }
+
+                //Otherwise, save the photos
                 var memoryStruct = SavePhoto(files);
 
                 //If the note already exists, update it
@@ -109,10 +126,10 @@ namespace BabysFirstCalendar.Controllers
             }
 
             //If the user has not submitted a file
+            //Put hasPhoto=0, photoLocation=null, fileSize=0 because there are no photos
             else
             {
                 //If the note already exists, update it
-                //Put hasPhoto=0, photoLocation=null, fileSize=0 because there are no photos
                 if (model.NoteID > 0)
                 {
                     if (UpdateMemory(model.NoteID, model.Date, model.Note, 0, null, 0) == 1)

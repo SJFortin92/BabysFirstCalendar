@@ -171,8 +171,9 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             return success;
         }
 
-        //Function that saves a user inputted photo
-        //Can be adapted in the future to save more than one photo at a time
+        //Function to be used with SaveMemory in the HomeController
+        //Saves the user inputted photo and can be adapted to save more than
+        //one photo in the future
         public static SaveMemoryStruct SavePhoto (HttpFileCollectionBase userFiles)
         {
             SaveMemoryStruct memory = new SaveMemoryStruct();
@@ -196,13 +197,6 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
 
             return memory;
         }
-
-        ////HomeController will call this function via SaveMemory and either create a new memory
-        ////Or update a new one
-        //public static int SaveNote(MemoryModel model)
-        //{
-
-        //}
 
         //Function to delete selected note
         public static int DeleteNote(int NoteID)
