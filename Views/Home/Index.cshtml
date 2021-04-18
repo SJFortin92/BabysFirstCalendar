@@ -74,17 +74,17 @@
     </div>
 </div>
 
-<!-- The following few lines references the css and javascript files for Fullcalendar
-     Should edit it so that it works with the fullcalendar library downloaded in BabysFirstCalendar
-     But it breaks once I reference the other stylesheets/scripts -->
-<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
-<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<!-- The following few lines reference the stylesheets -->
+<link href="~/Scripts/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+<link href="~/Scripts/fullcalendar/fullcalendar.print.css" rel="stylesheet" media="print" />
+<link href="~/Scripts/fullcalendar/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+
 
 @section Scripts{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <!-- Reference the scripts -->
+    <script src="~/Scripts/fullcalendar/moment.min.js"></script>
+    <script src="~/Scripts/fullcalendar/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/fullcalendar/bootstrap-datetimepicker.min.js"></script>
 
     <script>
 
@@ -138,12 +138,10 @@
                     //Don't display event time, since all memories are "all day events"
                     displayEventTime: false,
 
-                    //For some reason, the next button has to be in the center to display on the right, and the title
-                    //has to be in the right to display in the center. I don't know why but it works this way?
                     header: {
                         left: 'prev',
-                        center: 'next',
-                        right: 'title'
+                        center: 'title',
+                        right: 'next'
                     },
                     timeFormat: 'h(:mm)a',
                     eventLimit: true,
@@ -290,6 +288,14 @@
                 } else {
                     alert("This browser does not support FileReader.");
                 }
+            });
+
+            //Clear FileReader when myModalSave closes
+            $('#myModalSave').on('hidden.bs.modal', function () {
+                //Sets the previewImage div HTML to nothing
+                document.getElementById("previewImage").innerHTML = "";
+                //Sets the fileUpload input value to nothing
+                document.getElementById("fileUpload").value = "";
             });
 
             //What happens when a user clicks on btnSave
