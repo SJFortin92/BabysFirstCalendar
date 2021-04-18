@@ -9,6 +9,8 @@ using System.Web;
 using System.Web.Mvc;
 using static BabysFirstCalendar.DatabaseBusinessLogic.RetrievalProcessor;
 using static BabysFirstCalendar.DataAccess.SQLDataAccess;
+using System.Web.Hosting;
+using BabysFirstCalendar.Models;
 
 namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
@@ -16,6 +18,15 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
     //and delete a memory from the DB
     public static class MemoryProcessor
     {
+        //Struct to be used to create a new memory and edit one
+        //Will be used to return when we save photos
+        public struct SaveMemoryStruct
+        {
+            public string path { get; set; }
+            public int fileSize { get; set; }
+            public int hasPhoto { get; set; }
+        }
+
         //Loads up memories for display. It uses the demo Child notes
         //if the user is not logged in
         public static List<MemoryRetrievalDBModel> ViewMemories()
@@ -159,6 +170,39 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             //Returns 1 if successful, 0 if not
             return success;
         }
+
+        //Function that saves a user inputted photo
+        //Can be adapted in the future to save more than one photo at a time
+        public static SaveMemoryStruct SavePhoto (HttpFileCollectionBase userFiles)
+        {
+            SaveMemoryStruct memory = new SaveMemoryStruct();
+
+            HttpPostedFileBase photoUpload = userFiles[0];
+
+            //hasPhoto is true, set it to 1
+            memory.hasPhoto = 1;
+
+            //Get the file size
+            memory.fileSize = photoUpload.ContentLength / 1024;
+
+            //Set a random filename and make a path
+            string fileName = photoUpload.FileName;
+
+            //Use HostingEnvironment.MapPath instead of Server.MapPath because we are in a static class
+            memory.path = Path.Combine(HostingEnvironment.MapPath("~/upload/" + fileName));
+
+            //Save the file
+            photoUpload.SaveAs(memory.path);
+
+            return memory;
+        }
+
+        ////HomeController will call this function via SaveMemory and either create a new memory
+        ////Or update a new one
+        //public static int SaveNote(MemoryModel model)
+        //{
+
+        //}
 
         //Function to delete selected note
         public static int DeleteNote(int NoteID)

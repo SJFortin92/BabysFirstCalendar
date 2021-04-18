@@ -63,37 +63,22 @@ namespace BabysFirstCalendar.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult SaveMemory(MemoryModel model)
         {
-            //Declare the path, file size and photo bit so we can use it later
-            string path;
-            int fileSize;
-            int hasPhoto;
             var status = false;
 
             //If there are files to save...
             if (Request.Files.Count > 0)
             {
-                //Get the file
+                
+                //Get the files
                 HttpFileCollectionBase files = Request.Files;
-                HttpPostedFileBase photoUpload = files[0];
 
-                //hasPhoto is true, set it to 1
-                hasPhoto = 1;
-
-                //Get the file size
-                fileSize = photoUpload.ContentLength / 1024;
-
-                //Set a random filename and make a path
-                string fileName = photoUpload.FileName;
-                path = Path.Combine(Server.MapPath("~/upload/" + fileName));
-
-                //Save the file
-                photoUpload.SaveAs(path);
-
+                //Save the photos
+                var memoryStruct = SavePhoto(files);
 
                 //If the note already exists, update it
                 if (model.NoteID > 0)
                 {
-                    if (UpdateMemory(model.NoteID, model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                    if (UpdateMemory(model.NoteID, model.Date, model.Note, memoryStruct.hasPhoto, memoryStruct.path, memoryStruct.fileSize) == 1)
                     {
                         status = true;
                         return new JsonResult { Data = new { status = status } };
@@ -109,7 +94,7 @@ namespace BabysFirstCalendar.Controllers
                 else
                 {
                     //Call CreateMemory from MemoryProcessor in DatabaseBusinessLogic
-                    if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                    if (CreateMemory(model.Date, model.Note, memoryStruct.hasPhoto, memoryStruct.path, memoryStruct.fileSize) == 1)
                     {
                         status = true;
                         return new JsonResult { Data = new { status = status } };
@@ -126,14 +111,11 @@ namespace BabysFirstCalendar.Controllers
             //If the user has not submitted a file
             else
             {
-                hasPhoto = 0;
-                path = null;
-                fileSize = 0;
-
                 //If the note already exists, update it
+                //Put hasPhoto=0, photoLocation=null, fileSize=0 because there are no photos
                 if (model.NoteID > 0)
                 {
-                    if (UpdateMemory(model.NoteID, model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                    if (UpdateMemory(model.NoteID, model.Date, model.Note, 0, null, 0) == 1)
                     {
                         status = true;
                         return new JsonResult { Data = new { status = status } };
@@ -149,7 +131,7 @@ namespace BabysFirstCalendar.Controllers
                 else
                 {
                     //Call CreateMemory from MemoryProcessor in DatabaseBusinessLogic
-                    if (CreateMemory(model.Date, model.Note, hasPhoto, path, fileSize) == 1)
+                    if (CreateMemory(model.Date, model.Note, 0, null, 0) == 1)
                     {
                         status = true;
                         return new JsonResult { Data = new { status = status } };

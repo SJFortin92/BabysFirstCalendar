@@ -278,36 +278,5 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return 0;
         }
 
-        //For future reference of the logic when we go to load notes
-        //DO NOT USE THIS TO VIEW ALL ACCOUNTS - SECURITY HAZARD
-
-        //To add into the home controller when viewing notes:
-        /*public ActionResult ViewNotes()
-         * {
-         * ViewBag.Message = "Precious memories";
-         * var data = ViewNotes();
-         * List<NoteModel> notes = new List<NoteModel>();
-         * 
-         * foreach (var row in data)
-         * {
-         *         notes.Add(new NoteModel
-         *         {
-         *              Date = row.Text;
-         *              Text = row.Text;
-         *          });
-         *  Return View(notes);
-         * 
-        
-        
-        The following to stay in the processor section. It is a list of all the account information
-
-        public static List<NoteModel> LoadNotes()
-        {
-            string SQL = @"Select ChildID, FirstName, LastName from dbo.Note;";
-
-            return SQLDataAccess.LoadData<NoteModel>(SQL);
-        }
-
-    */
     }
 }
