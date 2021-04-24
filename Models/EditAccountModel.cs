@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using static BabysFirstCalendar.DatabaseBusinessLogic.EnumProcessor;
 
 namespace BabysFirstCalendar.Models
 {

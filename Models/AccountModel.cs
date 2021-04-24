@@ -3,16 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using static BabysFirstCalendar.DatabaseBusinessLogic.EnumProcessor;
 
 namespace BabysFirstCalendar.Models
 {
-    //To enable a drop-down table for Notifications
-    public enum Notification
-    {
-        Never,
-        Daily,
-        Weekly
-    }
     public class AccountModel
     {
         [Display(Name = "First name")]
