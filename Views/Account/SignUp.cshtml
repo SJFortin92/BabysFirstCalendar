@@ -1,4 +1,4 @@
-﻿@using BabysFirstCalendar.Models
+﻿@using BabysFirstCalendar.DatabaseBusinessLogic
 @model BabysFirstCalendar.Models.AccountModel
 
 @{
@@ -68,7 +68,7 @@
             @Html.LabelFor(model => model.NotificationSchedule, htmlAttributes: new { @class = "control-label col-md-2"})
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.NotificationSchedule,
-                    new SelectList(Enum.GetValues(typeof(Notification))),
+                    new SelectList(Enum.GetValues(typeof(EnumProcessor.Notification))),
                     "Notification Schedule")
              </div>
 
