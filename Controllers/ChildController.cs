@@ -11,9 +11,11 @@ namespace BabysFirstCalendar.Controllers
 {
     public class ChildController : Controller
     {
+
         //The Child view
         //Add functionality to return the selected child's information
         //Will only display if a user is logged in
+        
         [Authorize]
         public ActionResult Child()
         {
@@ -22,6 +24,7 @@ namespace BabysFirstCalendar.Controllers
         }
 
         //Processes if a user posts data
+        
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -10,6 +10,8 @@ using static BabysFirstCalendar.DatabaseBusinessLogic.RetrievalProcessor;
 
 namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
+    //Will need to add an edit and delete function in here
+    //Will also need to start supporting multiple children for one account
     public static class ChildProcessor
     {
         //This function is called by the ChildController in the Controller folder

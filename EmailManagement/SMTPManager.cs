@@ -15,10 +15,13 @@ namespace BabysFirstCalendar.EmailManagement
 {
     public static class SMTPManager
     {
-        //Function to compose the body of an email
+
+        // Function to compose the body of an email
+
         public static string ComposeBody(string firstName, DateTime dateLastUsed)
         {
-            //Probably should insert links to go straight to "make a new memory" and "edit account"
+            // This is the standard email message
+            // Probably should insert links to go straight to "make a new memory" and "edit account"
             string body = "Hello " + firstName + ",<br/>";
             body += "This is your reminder to put in a new memory in your Baby's First Calendar. <br/>";
             body += "The last recorded memory was on " + dateLastUsed + ".<br/>";
@@ -27,25 +30,26 @@ namespace BabysFirstCalendar.EmailManagement
             return body;
         }
 
-        //Sends the message to the user
+
+        // Sends the message to the user
         
         public static int SendMessage(string receiverEmail, string firstName, DateTime dateLastUsed)
         {
-            //Set all our variables for the email we need
+            // Set all our variables for the email we need
             string sendingEmail = "email";
             string fromName = "Baby's First Calendar";
             string password = "Password";
             string messageSubject = "Reminder to make a new memory";
             string body = ComposeBody(firstName, dateLastUsed);
 
-            //Make a new MailAddress item for the sender and receiver
+            // Make a new MailAddress item for the sender and receiver
             MailAddress sendingInfo = new MailAddress(sendingEmail, fromName, System.Text.Encoding.UTF8);
             MailAddress receivingInfo = new MailAddress(receiverEmail, firstName, System.Text.Encoding.UTF8);
             
-            //Try to send our email
+            // Try to send our email
             try 
             {
-                //Set up our smtpClient
+                // Set up our smtpClient
                 var smtpClient = new SmtpClient
                 {
                     Host = "smtp.gmail.com",
@@ -54,7 +58,7 @@ namespace BabysFirstCalendar.EmailManagement
                     EnableSsl = true,
                 };
 
-                //Compose our message
+                // Compose our message
                 using (MailMessage message = new MailMessage(sendingInfo, receivingInfo)
                 {
                     Subject = messageSubject,
@@ -62,31 +66,38 @@ namespace BabysFirstCalendar.EmailManagement
                     IsBodyHtml = true,
                     BodyEncoding = System.Text.Encoding.UTF8,
                 })
-                //Send our message
+                // Send our message
                 {
                     smtpClient.Send(message);
                 }
                 return 1;
             }
-            //If it fails, catch it
+
+            // If it fails, catch it
             catch
             {
                 return 0;
             }
         }
 
+
         //Loops through each of the accounts and sends an email if 
         //the account needs a reminder
+
         public static int IterateAccounts()
         {
             List<AccountRemindersDBModel> listOfAccounts = PullNotificationAccounts();
 
-            //For each account in the list of accounts...
+            // For each account in the list of accounts...
             foreach (var account in listOfAccounts)
             {
                 if (NeedsReminder(account))
                 {
                     int success = SendMessage(account.Email, account.FirstName, account.DateLastUsed);
+                    
+                    // I don't think returning success for each email will work in a production method?
+                    // It may only send one email and think that it's done. May need to revise this.
+
                     return success;
                 }
             }

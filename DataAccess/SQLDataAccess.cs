@@ -9,18 +9,25 @@ using System.Data.SqlClient;
 
 namespace BabysFirstCalendar.DataAccess
 {
+    //Class that processes SQL connections
+
     public static class SQLDataAccess
     {
-        public static object ToDBNull(object value)
-        {
-            if (null != value)
-                return value;
-            return DBNull.Value;
-        }
+       
+        //Default connection string to SQL
+
         public static string GetConnectionString(string connectionName = "NewbornCalendarEntities")
         {
             return ConfigurationManager.ConnectionStrings[connectionName].ConnectionString;
         }
+
+        
+        /// <summary>
+        /// Takes a SQL string such as "Select X from Y"
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="SQL"></param>
+        /// <returns> A list of type T, generally some sort of Model </returns>
 
         public static List<T> LoadData<T> (string SQL)
         {

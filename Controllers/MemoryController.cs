@@ -8,9 +8,14 @@ using System.Web.Mvc;
 using static BabysFirstCalendar.DatabaseBusinessLogic.MemoryProcessor;
 using System.Web.Helpers;
 
+//          NO LONGER IN USE - REPLACED BY THE HOME CONTROLLER WITH JSONRESULT METHODS
+
+
 namespace BabysFirstCalendar.Controllers
 {
+
     //Need to add UpdateMemory and DeleteMemory to here
+    
     public class MemoryController : Controller
     {
         //Function to retrieve memories from the database

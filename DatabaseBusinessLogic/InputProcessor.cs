@@ -7,9 +7,22 @@ using System.Web;
 
 namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
+    //This class will be used to validate user inputs
     public static class InputProcessor
     {
+
+        //Returns the value of an object, or converts it to a DB Null.
+
+        public static object ToDBNull(object value)
+        {
+            if (null != value)
+                return value;
+            return DBNull.Value;
+        }
+
+
         //Verifies the file is an approved image type
+        
         public static bool IsImage(HttpPostedFileBase image)
         {
             try
@@ -24,6 +37,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
 
                 using (var img = Image.FromStream(image.InputStream))
                 {
+                    //If the image is of the allowedFormat type, will return true
                     return allowedFormats.Contains(img.RawFormat);
                 }
             }
@@ -31,20 +45,23 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             return false;
         }
 
+
         //Verifies that the image is under 1MB
+        
         public static bool IsRightSize(HttpPostedFileBase image)
         {
             if (image.ContentLength > 1 * 1024 * 1024)
                 return false;
             
             else
-                return true;
-            
+                return true;    
         }
+        
 
         //This function validates that the user uploaded file is truly a web image
         //Returns false if not
         //Written so it can be iterated through multiple files in the future
+
         public static bool ImageValidation(HttpFileCollectionBase file, int i)
         {
             HttpPostedFileBase image = file[i];
@@ -60,7 +77,6 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             //Otherwise, return false
             else
                 return false;
-
         }
     }
 }

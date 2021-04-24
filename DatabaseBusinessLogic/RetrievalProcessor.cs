@@ -10,7 +10,9 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
     public static class RetrievalProcessor
     {
+
         //Get the Javascript-friendly path for a user uploaded photo from SQL
+        
         public static string RetrieveRelativeImagePath(string originalPath)
         {
             //Split up the directories
@@ -24,7 +26,9 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             return pathToReturn;
         }
 
-        //Get the current user's email
+
+        //Gets the current user's email
+        
         public static string RetrieveEmail()
         {
             //If the user is logged in
@@ -37,7 +41,9 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return null;
         }
 
-        //Function to retrive the user's first name
+
+        //Gets the current user's first name
+
         public static string RetrieveName()
         {
             //If the user is logged in
@@ -65,7 +71,9 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return null;
         }
 
-        //RetrieveName function overload that takes the email as a parameter
+
+        //RetrieveName function overload that takes the username as a parameter
+        
         public static string RetrieveName(string username)
         {
             string newConnectionString = SQLDataAccess.GetConnectionString();
@@ -73,6 +81,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             //Selects the FirstName where the AccountEmail equals the current user's email
             string SQL = @"SELECT FirstName FROM Account
                         WHERE Account.Email = '" + username + "'";
+            
             using (SqlConnection cnn = new SqlConnection(newConnectionString))
             {
                 SqlCommand command = new SqlCommand(SQL, cnn);
@@ -81,11 +90,11 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 cnn.Close();
                 return FirstName;
             }
-
         }
 
 
-        // Returns the current user's last name
+        // Gets the current user's last name
+        
         public static string RetrieveLastName()
         {
             //If the user is logged in
@@ -112,7 +121,8 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
         }
 
 
-        //Get the current user's phone number
+        //Gets the current user's phone number
+       
         public static string RetrievePhone()
         {
             //If the user is currently logged in
@@ -137,7 +147,9 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return null;
         }
 
-        //Retrieves the current user's notification as an int
+
+        //Gets the current user's notification schedule as an int
+
         public static int RetrieveNotification()
         {
             if (HttpContext.Current.User.Identity.IsAuthenticated)
@@ -162,7 +174,10 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return 0;
         }
 
+
+        //Gets the current user's account ID
         //If RetrieveAccountID returns 0, we will throw an error
+        
         public static int RetrieveAccountID()
         {
             if (HttpContext.Current.User.Identity.IsAuthenticated)
@@ -186,7 +201,11 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return 0;
         }
 
-        //We want to get the ChildID from SQL
+
+        //Returns the ChildID associated with the account
+        //Please note, this WILL pull all child IDs associated with the account
+        //Will need to eventually be able to filter children based on user selection
+        
         public static int RetrieveChildID()
         {
             //Get the associated AccountID

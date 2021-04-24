@@ -1,6 +1,7 @@
 ﻿using BabysFirstCalendar.Models;
 using System;
 using static BabysFirstCalendar.DatabaseBusinessLogic.AccountProcessor;
+using static BabysFirstCalendar.DatabaseBusinessLogic.EnumProcessor;
 using static BabysFirstCalendar.DatabaseBusinessLogic.RetrievalProcessor;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,15 @@ using System.Web.Mvc;
 using System.Web.Security;
 using System.Dynamic;
 
-//Controller to process Account CRUD, Login and Logout
-
 namespace BabysFirstCalendar.Controllers
 {
+    //Controller to process Account CRUD, Login and Logout
+    
     public class AccountController : Controller
     { 
+    
         //View for the Login page
+        
         public ActionResult Login()
         {
             ViewBag.Message = "Login to your account.";
@@ -25,6 +28,7 @@ namespace BabysFirstCalendar.Controllers
 
 
         //If the user tries to log in from the normal view page
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model)
@@ -46,6 +50,7 @@ namespace BabysFirstCalendar.Controllers
         }
 
         //Logs users out on click
+        
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
@@ -53,13 +58,16 @@ namespace BabysFirstCalendar.Controllers
         }
 
         //View for the SignUp page
+        
         public ActionResult SignUp()
         {
             ViewBag.Message = "Account signup.";
             return View();
         }
 
+
         //Processes SignUp after user posts data
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SignUp(AccountModel model)
@@ -87,8 +95,10 @@ namespace BabysFirstCalendar.Controllers
             return View();
         }
         
+
         //The Edit view
         //Will only allow users to see it if they are logged in
+        
         [Authorize]
         public ActionResult Edit()
         {
@@ -106,7 +116,9 @@ namespace BabysFirstCalendar.Controllers
             return View(data);
         }
 
-        //Processes if the user posts data
+
+        //Processes if the user posts data to the edit view
+        
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -131,15 +143,19 @@ namespace BabysFirstCalendar.Controllers
             return View(model);
         }
 
+
         //Returns the EditPassword view
         //Will only allow users to see it if they are logged in
+        
         [Authorize]
         public ActionResult EditPassword()
         {
             return View();
         }
 
+
         //Submits data if user posts data
+        
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -160,15 +176,19 @@ namespace BabysFirstCalendar.Controllers
             return View(model);
         }
 
+
         //The DeleteAccount view
         //Will only allow users to see it if they are logged in
+        
         [Authorize]
         public ActionResult DeleteAccount()
         {
             return View();
         }
 
-        //Processes if the user posts data
+
+        //Processes if the user posts data to DeleteAccount view
+        
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -191,6 +211,5 @@ namespace BabysFirstCalendar.Controllers
 
             return View(model);
         }
-
     }
 }

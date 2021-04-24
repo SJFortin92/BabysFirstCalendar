@@ -9,15 +9,19 @@ using System.Web;
 using System.Web.Mvc;
 using static BabysFirstCalendar.DatabaseBusinessLogic.RetrievalProcessor;
 using static BabysFirstCalendar.DataAccess.SQLDataAccess;
+using static BabysFirstCalendar.DatabaseBusinessLogic.InputProcessor;
 using System.Web.Hosting;
 using BabysFirstCalendar.Models;
 
 namespace BabysFirstCalendar.DatabaseBusinessLogic
 {
+
     //Class contains methods to load a list of memories, create a new memory in the DB, update a memory in the DB
     //and delete a memory from the DB
+
     public static class MemoryProcessor
     {
+    
         //Struct to be used to create a new memory and edit one
         //Will be used to return when we save photos
         public struct SaveMemoryStruct
@@ -27,11 +31,16 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             public int hasPhoto { get; set; }
         }
 
-        //Loads up memories for display. It uses the demo Child notes
-        //if the user is not logged in
+
+        /// <summary>
+        /// Loads up user (or demo) memories for display on the calendar
+        /// Is called by the HomeController. 
+        /// </summary>
+        /// <returns>A list of memories</returns>
+        
         public static List<MemoryRetrievalDBModel> ViewMemories()
         {
-
+            //If the user is logged in..
             if (HttpContext.Current.User.Identity.IsAuthenticated)
             {
                 int childID = RetrieveChildID();
@@ -44,6 +53,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 return LoadData<MemoryRetrievalDBModel>(SQL);
             }
 
+            //Otherwise, use the demo childID
             else
             {
                 int childID = 10;
@@ -57,7 +67,20 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             }
         }
 
-        //This is called by the MemoryController in the Controller folder
+
+        /// <summary>
+        /// The SaveMemory function in the HomeController processes
+        /// if a note exists or not. If not, SaveMemory calls this method
+        /// This method will save the new memory in SQL by calling
+        /// a stored procedure.
+        /// </summary>
+        /// <param name="Date"></param>
+        /// <param name="Text"></param>
+        /// <param name="HasPhoto"></param>
+        /// <param name="PhotoLocation"></param>
+        /// <param name="PhotoSize"></param>
+        /// <returns>A 1 if successful, 0 if not</returns>
+
         public static int CreateMemory(DateTime Date, string Text, int HasPhoto, string PhotoLocation, int PhotoSize)
         {
             //Calls RetrieveChildID from the RetrievalProcessor in DatabaseBusinessLogic
@@ -70,6 +93,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             }
 
             //Calls MemoryDBModel from DatabaseModels
+            //Sets data that was given as a parameter to a DB Model
             MemoryDBModel data = new MemoryDBModel
             {
                 ChildID = ChildID,
@@ -80,6 +104,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 PhotoSize = PhotoSize
             };
 
+            //Opens the SQL connection
             string newConnectionString = SQLDataAccess.GetConnectionString();
             SqlConnection cnn = new SqlConnection(newConnectionString);
             cnn.Open();
@@ -95,7 +120,8 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             cmd.Parameters.AddWithValue("@HasPhoto", data.HasPhoto);
             
             //This one is special since the path may be null. We must account for possibly passing a null value
-            cmd.Parameters.Add(new SqlParameter("@PhotoLocation", SQLDataAccess.ToDBNull(data.PhotoLocation)));
+            //Use ToDBNull to return a value if not null, or a SQL approved null if null
+            cmd.Parameters.Add(new SqlParameter("@PhotoLocation", InputProcessor.ToDBNull(data.PhotoLocation)));
 
             cmd.Parameters.AddWithValue("@PhotoSize", data.PhotoSize);
             cmd.Parameters.Add("@Success", SqlDbType.Int, 1);
@@ -113,7 +139,22 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             return success;
         }
 
-        //Data to update a memory
+
+        /// <summary>
+        /// This is also called by SaveMemory in the HomeController.
+        /// But this takes a NoteID as a parameter, allowing this method
+        /// to update an already existing note. 
+        /// Similar to CreateMemory, it uses a stored procedure to update
+        /// in SQL
+        /// </summary>
+        /// <param name="NoteID"></param>
+        /// <param name="Date"></param>
+        /// <param name="Text"></param>
+        /// <param name="HasPhoto"></param>
+        /// <param name="PhotoLocation"></param>
+        /// <param name="PhotoSize"></param>
+        /// <returns>A 1 if successful, 0 if not</returns>
+
         public static int UpdateMemory(int NoteID, DateTime Date, string Text, int HasPhoto, string PhotoLocation, int PhotoSize)
         {
             //Calls RetrieveChildID from the RetrievalProcessor in DatabaseBusinessLogic
@@ -141,7 +182,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             SqlConnection cnn = new SqlConnection(newConnectionString);
             cnn.Open();
 
-            //Calls the NoteCreation stored procedure in SQL
+            //Calls the NoteUpdate stored procedure in SQL
             SqlCommand cmd = new SqlCommand("NoteUpdate", cnn);
 
             cmd.CommandType = CommandType.StoredProcedure;
@@ -153,7 +194,7 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             cmd.Parameters.AddWithValue("@HasPhoto", data.HasPhoto);
 
             //This one is special since the path may be null. We must account for possibly passing a null value
-            cmd.Parameters.Add(new SqlParameter("@PhotoLocation", SQLDataAccess.ToDBNull(data.PhotoLocation)));
+            cmd.Parameters.Add(new SqlParameter("@PhotoLocation", InputProcessor.ToDBNull(data.PhotoLocation)));
 
             cmd.Parameters.AddWithValue("@PhotoSize", data.PhotoSize);
             cmd.Parameters.Add("@Success", SqlDbType.Int, 1);
@@ -171,9 +212,17 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             return success;
         }
 
-        //Function to be used with SaveMemory in the HomeController
-        //Saves the user inputted photo and can be adapted to save more than
-        //one photo in the future
+
+        /// <summary>
+        /// Saves the user inputted photo and can be adapted, eventually,
+        /// to save more than one photo in the future.
+        /// Is called by the SaveMemory function in the HomeController
+        /// This does NOT validate the photo itself, as that is called before
+        /// this function. Remember to validate the user upload BEFORE calling this
+        /// </summary>
+        /// <param name="userFiles">User uploaded files - AFTER VALIDATION</param>
+        /// <returns>The SaveMemoryStruct (i.e. filepath, filesize, and hasPhoto)</returns>
+        
         public static SaveMemoryStruct SavePhoto (HttpFileCollectionBase userFiles)
         {
             SaveMemoryStruct memory = new SaveMemoryStruct();
@@ -198,7 +247,15 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
             return memory;
         }
 
-        //Function to delete selected note
+
+        /// <summary>
+        /// This function is called by the HomeController.
+        /// Will delete the selected note from SQL using
+        /// a stored procedure
+        /// </summary>
+        /// <param name="NoteID"></param>
+        /// <returns>A 1 if successful, 0 if not</returns>
+        
         public static int DeleteNote(int NoteID)
         {
             MemoryDBModel data = new MemoryDBModel
@@ -206,14 +263,15 @@ namespace BabysFirstCalendar.DatabaseBusinessLogic
                 NoteID = NoteID
             };
 
+            //Connect to the database
             string newConnectionString = SQLDataAccess.GetConnectionString();
             SqlConnection cnn = new SqlConnection(newConnectionString);
             cnn.Open();
 
-            //Calls the NoteCreation stored procedure in SQL
+            //Calls the NoteDeletion stored procedure in SQL
             SqlCommand cmd = new SqlCommand("NoteDeletion", cnn);
-
             cmd.CommandType = CommandType.StoredProcedure;
+
             //Add parameters
             cmd.Parameters.AddWithValue("NoteID", data.NoteID);
             cmd.Parameters.Add("@Success", SqlDbType.Int, 1);

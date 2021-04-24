@@ -16,12 +16,15 @@ namespace BabysFirstCalendar.Controllers
 {
     public class HomeController : Controller
     {
+
         public ActionResult Index()
         {
             return View();
         }
 
+
         //Json result to display the memories
+        
         public JsonResult DisplayMemories()
         {
             var memories = ViewMemories();
@@ -43,6 +46,9 @@ namespace BabysFirstCalendar.Controllers
             return new JsonResult { Data = memories, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
+
+        //Deletes a memory from the calendar
+        
         [Authorize]
         [HttpPost]
         public JsonResult DeleteMemory(MemoryModel model)
@@ -55,13 +61,21 @@ namespace BabysFirstCalendar.Controllers
             }
 
             return new JsonResult { Data = new { status = status } };
-
         }
 
-        //Update or save a memory using the Fullcalendar on Home page
-        //Need to incorporate ValidateAntiForgeryToken with JsonResult
-        //Want to refactor this so that it isn't so bulky.
-        //Request.Files.Count is not recognized in static classes - workaround?
+
+        /// <summary>
+        /// This controller updates or saves a memory and is called on the Index page
+        /// Is part of the calendar display
+        /// 
+        /// To do:
+        ///     Refactor into a static class
+        ///         (Request.Files.Count is not recognized in static classes - workaround?)
+        ///     Incorporate ValidateAntiForgeryToken with JsonResult
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns> A JsonResult with status = true if successful, false if not </returns>
+
         [Authorize]
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -100,11 +114,6 @@ namespace BabysFirstCalendar.Controllers
                         status = true;
                         return new JsonResult { Data = new { status = status } };
                     }
-
-                    else
-                    {
-                        ModelState.AddModelError("", "Failure updating the note");
-                    }
                 }
 
                 //If the note does not exist, then create a new one
@@ -115,11 +124,6 @@ namespace BabysFirstCalendar.Controllers
                     {
                         status = true;
                         return new JsonResult { Data = new { status = status } };
-                    }
-
-                    else
-                    {
-                        ModelState.AddModelError("", "Error when adding a new memory");
                     }
                 }
 
@@ -137,11 +141,6 @@ namespace BabysFirstCalendar.Controllers
                         status = true;
                         return new JsonResult { Data = new { status = status } };
                     }
-
-                    else
-                    {
-                        ModelState.AddModelError("", "Failure updating the note");
-                    }
                 }
 
                 //If the note does not exist, then create a new one
@@ -153,15 +152,9 @@ namespace BabysFirstCalendar.Controllers
                         status = true;
                         return new JsonResult { Data = new { status = status } };
                     }
-
-                    else
-                    {
-                        ModelState.AddModelError("", "Error when adding a new memory");
-                    }
                 }
 
             }
-
             return new JsonResult { Data = new { status = status } };
         }
 
@@ -173,16 +166,19 @@ namespace BabysFirstCalendar.Controllers
             return View();
         }
 
+
         public ActionResult Contact()
         {
             ViewBag.Message = "Contact us";
 
             return View();
         }
+        
+
+        //Currently does not send contact information to Baby's First Calendar - will need to update
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public ActionResult Contact(ContactModel model)
         {
             if (ModelState.IsValid)
@@ -193,5 +189,4 @@ namespace BabysFirstCalendar.Controllers
             return View(model);
         }
     }
-
 }

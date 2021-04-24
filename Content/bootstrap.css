@@ -5983,7 +5983,7 @@ button.close {
   position: relative;
   width: auto;
   margin: 10px;
-  overflow-y: initial !important;
+  overflow-y: initial;
 }
 .modal-content {
   position: relative;
@@ -6019,9 +6019,14 @@ button.close {
 }
 .modal-header .close {
   margin-top: -2px;
+  margin-right: -2px;
 }
 .modal-title {
-  margin: 0;
+ /* margin: 0;*/
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  margin-bottom: 0;
   line-height: 1.42857143;
 }
 .modal-body {
